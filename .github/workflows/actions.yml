@@ -28,6 +28,11 @@ jobs:
           scrapy runspider showtimes.py
           scrapy runspider showtimes.py -O ../../output_showtimes.json
           
+      - name: generate jpg # run belcourt_generate_image.py
+        run: |
+          cd ../..
+          python belcourt_generate_image.py
+          
       - name: commit files
         run: |
           git config --local user.email "action@github.com"
