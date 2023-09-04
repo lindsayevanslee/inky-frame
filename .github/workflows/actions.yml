@@ -27,10 +27,10 @@ jobs:
           cd belcourt/belcourt/spiders
           scrapy runspider showtimes.py
           scrapy runspider showtimes.py -O ../../output_showtimes.json
-          
+
       - name: generate jpg # run belcourt_generate_image.py
         run: |
-          cd ../..
+          cd belcourt
           python belcourt_generate_image.py
           
       - name: commit files
