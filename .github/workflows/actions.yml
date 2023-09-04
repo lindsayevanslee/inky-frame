@@ -26,7 +26,7 @@ jobs:
         run: |
           cd belcourt/belcourt/spiders
           scrapy runspider showtimes.py
-          scrapy runspider showtimes.py -o ../../output_showtimes.json
+          scrapy runspider showtimes.py -O ../../output_showtimes.json
           
       - name: commit files
         run: |
