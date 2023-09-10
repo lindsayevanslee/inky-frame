@@ -2,7 +2,7 @@ name: run belcourt spider
 
 on:
   schedule:
-    - cron: '0 13 * * *' # daily at 13:00 (which should be 8am Nashville time?)
+    - cron: '0 10 * * *' # daily at 10:00 (which should be 5am Nashville time?)
 
 jobs:
   build:
