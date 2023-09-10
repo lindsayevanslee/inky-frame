@@ -77,3 +77,5 @@ imgDraw.text((10, 100), anchor = 'la', text = showtime_string, font=font_show, f
 
 #save result
 background.save('result.jpg', progressive = False)
+
+background.save('result_optimized.jpg', progressive = False, optimize = True, quality = 30)
