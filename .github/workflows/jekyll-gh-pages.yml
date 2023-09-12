@@ -6,6 +6,10 @@ on:
   push:
     branches: ["main"]
 
+  # Runs on a schedule
+  schedule:
+    - cron: '30 10 * * *' # daily at 10:30 (which should be 5:30am Nashville time?)
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -28,8 +32,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ssh-key: ${{ secrets.SSH_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build with Jekyll
