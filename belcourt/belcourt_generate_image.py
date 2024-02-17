@@ -94,7 +94,13 @@ for i in range(len(showtimes[0]['shows'])):
     #add this showtime string to the full showtime string
     showtime_string = showtime_string + this_showtime_string
 
-    
+#count number of lines in showtime string
+num_lines = showtime_string.count('\n') + 1
+
+#adjust size of font based on how many lines there are
+if num_lines > 14:
+    font_show = ImageFont.truetype("Montserrat-Bold.ttf", size = 25 * (12/num_lines))
+
 
 imgDraw.text((10, 100), anchor = 'la', text = showtime_string, font=font_show, fill=(51, 51, 51))
 
