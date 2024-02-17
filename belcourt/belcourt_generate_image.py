@@ -8,6 +8,23 @@
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import json
 
+#create function for inserting indented new lines in a long string without breaking up words
+def insert_newlines(string, every=64):
+    lines = []
+    while string:
+        if len(string) <= every:
+            lines.append(string)
+            break
+        else:
+            space_position = string.rfind(' ', 0, every)
+            if space_position >= 0:
+                end = space_position
+            else:
+                end = every
+            lines.append(string[:end])
+            string = string[end:].lstrip()
+    return '\n        '.join(lines)
+
 #read showtime info
 with open("output_showtimes.json", "rt") as f:
     showtimes = json.load(f)
@@ -68,7 +85,16 @@ for i in range(len(showtimes[0]['shows'])):
     this_show = showtimes[0]['shows'][str(i)]['show'][0]
     this_showtimes = ', '.join(showtimes[0]['shows'][str(i)]['showtimes'])
 
-    showtime_string = showtime_string + this_show + ' ' + this_showtimes + '\n'
+    #concatenate this show with its showtimes into one string
+    this_showtime_string = this_show + ' ' + this_showtimes + '\n'
+
+    #insert newlines into this showtime string
+    this_showtime_string = insert_newlines(this_showtime_string, every=50)
+
+    #add this showtime string to the full showtime string
+    showtime_string = showtime_string + this_showtime_string
+
+    
 
 imgDraw.text((10, 100), anchor = 'la', text = showtime_string, font=font_show, fill=(51, 51, 51))
 
