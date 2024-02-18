@@ -47,14 +47,7 @@ while True:
         exec(f.read())
     
     print_log("finished showtimes script")
-    print_log("going to sleep now")
-    #import showtimes_from_web
-    #showtimes_from_web.main()
 
-    #import inky_helper as ih
-    #import inky_frame
-    #ih.clear_state()
-    #ih.launch_app("showtimes_from_web")
-    #ih.clear_state()
+    print_log("going to sleep now")
     inky_frame.sleep_for(60)
 
