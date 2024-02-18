@@ -3,6 +3,8 @@ Script loaded onto inky frame that pulls the jpg from github pages, loads onto t
 
 Run this script as main.py on the inky frame to run on screen start up
 
+Adapted from: https://github.com/pimoroni/pimoroni-pico/blob/main/micropython/examples/inky_frame/inky_frame_xkcd_daily.py
+
 """
 
 import gc
