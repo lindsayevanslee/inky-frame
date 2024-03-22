@@ -49,5 +49,5 @@ while True:
     print_log("finished showtimes script")
 
     print_log("going to sleep now")
-    inky_frame.sleep_for(60)
+    inky_frame.sleep_for(120)
 
