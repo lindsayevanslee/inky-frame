@@ -161,3 +161,7 @@ cython_debug/
 
 #Rstudio objects
 .Rproj.user
+
+#my secrets
+nashvillemta/my_secrets.py
+nashvillemta/temp_gtfs
