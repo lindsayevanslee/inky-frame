@@ -1,0 +1,16 @@
+name: inkyenv_test
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11.8
+  - pip=23.2.1
+  #belcourt spider
+  - Pillow=10.2.0
+  - Scrapy=2.11.1
+  #nashvillemta project
+  - pip:
+    - gtfs-realtime-bindings==1.0.0
+  - pandas=2.2.1
+
+prefix: ./envs
