@@ -12,5 +12,6 @@ dependencies:
   - pip:
     - gtfs-realtime-bindings==1.0.0
   - pandas=2.2.1
+  - scipy=1.13.0
 
 prefix: ./envs
