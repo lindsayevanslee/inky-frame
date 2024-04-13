@@ -47,7 +47,10 @@ def find_nearest_stops():
     trips_df = pd.read_csv('temp_gtfs/trips.txt', dtype={'route_id': str})
     stop_times_df = pd.read_csv('temp_gtfs/stop_times.txt')
 
-    print(trips_df.head())
+    #print(trips_df.head())
+
+    #initialze dictionary of all nearest stops
+    list_nearest_stops = []
 
     #loop through routes in my_routes
     for this_route in my_routes:
@@ -76,19 +79,29 @@ def find_nearest_stops():
             
             print(f"Nearest Stop for Route {this_route} Direction {this_direction}: {nearest_stop['stop_name']} (ID: {nearest_stop['stop_id']})")
 
-            #convert nearest_stop to a 1-row data frame
-            nearest_stop = nearest_stop.to_frame().transpose()
-            print(nearest_stop)
+            #convert neraest_stop to dictionary format
+            nearest_stop = nearest_stop.to_dict()
+            #print(nearest_stop)
 
             #add columns for this_route and this_direction
             nearest_stop['route_id'] = this_route
             nearest_stop['direction_id'] = this_direction
+            #print(nearest_stop)
 
-            #save csv of nearest stops
-            nearest_stop.to_csv(f'temp_gtfs/nearest_stop.csv', index=False)
+            #add nearest_stop to list_nearest_stops
+            list_nearest_stops.append(nearest_stop)
+
+   
+    print(list_nearest_stops)
+
+    #convert list_nearest_stops to a dataframe
+    df_nearest_stops = pd.DataFrame(list_nearest_stops)
+    print(df_nearest_stops)
+
+    #save df_nearest_stops to a csv file
+    df_nearest_stops.to_csv(f'temp_gtfs/nearest_stops.csv', index=False)
 
 
-# Replace 'URL_OF_YOUR_GTFS_ZIP_FILE' with the actual GTFS zip file URL
 download_and_extract_gtfs_files(gtfs_zip_url)
 load_and_process_route_files()
 find_nearest_stops()
