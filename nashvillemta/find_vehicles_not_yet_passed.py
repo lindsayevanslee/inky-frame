@@ -35,7 +35,7 @@ vehicles_with_nearest_stops['has_passed'] = vehicles_with_nearest_stops.apply(la
 print(vehicles_with_nearest_stops)
 
 # Save the data to a CSV file
-vehicles_with_nearest_stops.to_csv('temp_gtfs/vehicles_with_nearest_stops.csv', index=False)
+vehicles_with_nearest_stops.sort_values(['route_id', 'direction_id']).to_csv('temp_gtfs/vehicles_with_nearest_stops.csv', index=False)
 
 # Filter out vehicles that have already passed the stop
 #vehicles_not_passed = vehicles_with_nearest_stops[vehicles_with_nearest_stops['has_passed'] == False]
