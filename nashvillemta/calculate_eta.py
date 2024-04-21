@@ -41,5 +41,5 @@ df_vehicles['eta_minutes'] = df_vehicles.apply(lambda row: calculate_eta_transit
     (row['stop_lat'], row['stop_lon']),  # destination from stop position
     gmaps), axis=1)
 
-print(df_vehicles.loc[df_vehicles.has_passed][['route_id', 'direction_id', 'vehicle_id', 'eta_minutes']].sort_values(['route_id', 'direction_id']))
+print(df_vehicles.loc[~df_vehicles.has_passed][['route_id', 'direction_id', 'vehicle_id', 'eta_minutes']].sort_values(['route_id', 'direction_id']))
 
