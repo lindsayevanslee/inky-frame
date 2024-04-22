@@ -28,6 +28,7 @@ def fetch_vehicles_by_route(url, target_route_ids):
             vehicle_info = {
                 'route_id' : entity.vehicle.trip.route_id,
                 'direction_id': entity.vehicle.trip.direction_id,
+                'trip_id' : entity.vehicle.trip.trip_id,
                 'vehicle_id': entity.vehicle.vehicle.id,
                 'latitude': entity.vehicle.position.latitude,
                 'longitude': entity.vehicle.position.longitude,
