@@ -17,6 +17,9 @@ font_path = 'Roboto-Regular.ttf'
 # Image settings
 image_width = 800
 image_height = 480
+anchor_x = 10
+anchor_y = 10
+line_height = font_size + 5
 
 ## read data -------------------------
 
@@ -46,11 +49,6 @@ draw = ImageDraw.Draw(image)
 # Set the font
 font = ImageFont.truetype(font_path, font_size)
 
-# Draw the trip information on the image
-x = 10
-y = 10
-line_height = font_size + 5
-
 # Loop through the DataFrame and draw the trip information
 for index, row in df_wrangled.iterrows():
     # Get the route color and text color
@@ -58,10 +56,10 @@ for index, row in df_wrangled.iterrows():
     route_text_color = '#' + row['route_text_color']
     
     # Draw the oval with route color
-    oval_width = 40
-    oval_height = 20
-    oval_x = x
-    oval_y = y
+    oval_height = font_size
+    oval_width = oval_height * 2
+    oval_x = anchor_x
+    oval_y = anchor_y
     draw.ellipse([(oval_x, oval_y), (oval_x + oval_width, oval_y + oval_height)], fill=route_color)
     
     # add route number in the center of the oval
@@ -70,9 +68,9 @@ for index, row in df_wrangled.iterrows():
     draw.text((text_x, text_y), f"{row['route_id']}", font=font, fill=route_text_color)
     
     # Draw the text with route id
-    draw.text((x + oval_width + 5, y), f"Route: {row['route_id']}; {row['trip_headsign']}; {row['eta_minutes_str']}", font=font, fill=font_color)
+    draw.text((anchor_x + oval_width + 5, anchor_y), f"{row['trip_headsign']} - {row['eta_minutes_str']}", font=font, fill=font_color)
     
-    y += line_height
+    anchor_y += line_height
 
 ## print -------------------------
 
