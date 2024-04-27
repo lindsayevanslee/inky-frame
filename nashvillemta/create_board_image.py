@@ -1,5 +1,6 @@
 import pandas as pd
 from PIL import Image, ImageDraw, ImageFont
+from datetime import datetime
 
 ## setup -------------------------
 
@@ -43,6 +44,10 @@ df_wrangled['eta_minutes_str'] = df_wrangled['eta_minutes'].apply(lambda x: f"{i
 
 print(df_wrangled)
 
+#current time
+now = datetime.now()
+current_datetime = now.strftime("%Y-%m-%d %H:%M:%S")
+print("Current Time =", current_datetime)
 
 ## create image -------------------------
 
@@ -53,13 +58,18 @@ draw = ImageDraw.Draw(image)
 # Set the font
 font = ImageFont.truetype(font_path, font_size)
 font_title = ImageFont.truetype(font_path, size=font_size_title)
+font_subtitle = ImageFont.truetype(font_path, size=font_size_title * (2/3))
+
 
 # Draw the title
 draw.text((anchor_x, anchor_y_title), title, font=font_title, fill=font_color)
 
+# Draw the subtitle
+draw.text((anchor_x, anchor_y_title + font_size_title + 5), current_datetime, font=font_subtitle, fill=font_color)
+
 # Loop through the DataFrame and draw the trip information
 for index, row in df_wrangled.iterrows():
-    
+
     # Get the route color and text color
     route_color = '#' + row['route_color']
     route_text_color = '#' + row['route_text_color']
