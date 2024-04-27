@@ -10,16 +10,20 @@ csv_file = 'temp_gtfs/vehicles_to_display.csv'
 output_image = 'departure_board.png'
 
 # Font settings
-font_size = 20
-font_color = (0, 0, 0)  # White
+font_size = 40
+font_size_title = 60
+font_color = 'black'
 font_path = 'Roboto-Regular.ttf'
 
 # Image settings
 image_width = 800
 image_height = 480
 anchor_x = 10
-anchor_y = 10
+anchor_y = 200
 line_height = font_size + 5
+anchor_y_title = 10
+
+title = "Bus Departures Near Me"
 
 ## read data -------------------------
 
@@ -48,28 +52,62 @@ draw = ImageDraw.Draw(image)
 
 # Set the font
 font = ImageFont.truetype(font_path, font_size)
+font_title = ImageFont.truetype(font_path, size=font_size_title)
+
+# Draw the title
+draw.text((anchor_x, anchor_y_title), title, font=font_title, fill=font_color)
 
 # Loop through the DataFrame and draw the trip information
 for index, row in df_wrangled.iterrows():
+    
     # Get the route color and text color
     route_color = '#' + row['route_color']
     route_text_color = '#' + row['route_text_color']
     
+    shape_width_to_height_ratio = 1.5
+
+    """
     # Draw the oval with route color
     oval_height = font_size
-    oval_width = oval_height * 2
+    oval_width = oval_height * shape_width_to_height_ratio
     oval_x = anchor_x
     oval_y = anchor_y
-    draw.ellipse([(oval_x, oval_y), (oval_x + oval_width, oval_y + oval_height)], fill=route_color)
+    #draw.ellipse([(oval_x, oval_y), (oval_x + oval_width, oval_y + oval_height)], fill=route_color)
     
-    # add route number in the center of the oval
-    text_x = oval_x + (oval_width - font_size) / 2
-    text_y = oval_y + (oval_height - font_size) / 2
+    """
+
+    # Draw a rounded rectangle with route color
+    corner_radius = 10  # adjust as needed
+    rectangle_x1 = anchor_x
+    rectangle_y1 = anchor_y
+    rectangle_x2 = anchor_x + font_size * shape_width_to_height_ratio
+    rectangle_y2 = anchor_y + font_size
+    draw.rounded_rectangle([(rectangle_x1, rectangle_y1), (rectangle_x2, rectangle_y2)], fill=route_color, radius=corner_radius)
+
+
+    # Get the bounding box of the text
+    bbox = draw.textbbox((0, 0), f"{row['route_id']}", font=font)
+
+    # Calculate the width and height of the text
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+
+    #print(f"Text width: {text_width}, Text height: {text_height}")
+
+    # Calculate the new x and y coordinates for text
+    text_x = anchor_x + (font_size * shape_width_to_height_ratio - text_width) / 2
+    #text_y = anchor_y + (font_size - text_height) / 2
+
+    #text_x = anchor_x + (font_size * shape_width_to_height_ratio - font_size) / 2
+    text_y = anchor_y + (font_size - font_size) / 2 #for some reason vertical alignment works better using font_size instead of the bbox height
+
+    # Draw the text with route number
     draw.text((text_x, text_y), f"{row['route_id']}", font=font, fill=route_text_color)
     
-    # Draw the text with route id
-    draw.text((anchor_x + oval_width + 5, anchor_y), f"{row['trip_headsign']} - {row['eta_minutes_str']}", font=font, fill=font_color)
+    # Draw the text with route name and ETA
+    draw.text((anchor_x + font_size * shape_width_to_height_ratio + 5, anchor_y), f"{row['trip_headsign']} - {row['eta_minutes_str']}", font=font, fill=font_color)
     
+    # Increment the y coordinate for the next line
     anchor_y += line_height
 
 ## print -------------------------
