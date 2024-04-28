@@ -124,7 +124,7 @@ df_vehicles = df_vehicles.loc[~df_vehicles.has_passed][['route_id', 'direction_i
 print(df_vehicles)
 
 #read in vehicle metadata
-vehicle_metadata = pd.read_csv('temp_gtfs/merged_data.csv', dtype={'route_id': str})[['route_id', 'direction_id', 'trip_id', 'trip_headsign', 'route_color', 'route_text_color']]
+vehicle_metadata = pd.read_csv('temp_gtfs/merged_data.csv', dtype={'route_id': str, 'trip_id': str})[['route_id', 'direction_id', 'trip_id', 'trip_headsign', 'route_color', 'route_text_color']]
 
 #print rows of vehicle_metadata on my route
 print(vehicle_metadata.loc[vehicle_metadata['route_id'].isin(my_routes)])
