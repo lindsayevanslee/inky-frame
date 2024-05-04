@@ -34,65 +34,73 @@ def calculate_eta_transit(origin, destination, trip_id, gmaps_client):
             #initialize bus_duration
             bus_duration = 0
 
-            for step in directions_result[0]['legs'][0]['steps']:
+            #pull out steps from directions_result
+            steps = directions_result[0]['legs'][0]['steps']
 
-                #if step is a bus, add the duration to the total
-                if step['travel_mode'] == 'TRANSIT' and step['transit_details']['line']['vehicle']['type'] == 'BUS':
-                    bus_duration += step['duration']['value']  # duration in seconds
-                
-                #if step is a walking step, recalculate the duration assuming person is already on the bus
-                #this will be recalculated by finding the relative position of the origin between the previous and next bus stops
-                #currently this assumes that the walking step goes in the same direction as the bus, meaning the walking doesn't
-                #backtrack to find the closest stop
-                elif step['travel_mode'] == 'WALKING':
+            #if there is only one step and travel mode is walking, assume bus is 1 minute away
+            if len(steps) == 1 and steps[0]['travel_mode'] == 'WALKING':
+                bus_duration = 60 
+            #otherwise: 
+            else:
+                for step in steps:
 
-                    #find all stops on this trip
-                    trip_all_stops = df_stop_times[df_stop_times['trip_id'] == trip_id]
-
-                    #next bus stop in the direction of travel - end point of WALKING step
-                    next_stop_location = (step['end_location']['lat'], step['end_location']['lng'])
-                    next_stop_name = step['html_instructions'].replace('Walk to ', '').upper()
-                    next_stop_id = df_stops[df_stops['stop_name'] == next_stop_name]['stop_id'].values[0]
-
-                    #find number of stop in the stop sequence for this trip
-                    next_stop_sequence = trip_all_stops[trip_all_stops['stop_id'] == next_stop_id]['stop_sequence'].values[0]
-
-                    # filter list of all trip stops to next stop and the previous stop
-                    next_previous_stop_times = trip_all_stops[trip_all_stops['stop_sequence'].between(next_stop_sequence - 1, next_stop_sequence)]
-                    print(next_previous_stop_times)
-
-                    #pull distance from walking step in meters and convert to miles
-                    step_distance = step['distance']['value'] * 0.000621371
-
-                    #find distance between two stops in next_previous_stop_times
-                    # find shape_dist_traveled for the next stop and the previous stop
-                    next_stop_shape_dist_traveled = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence]['shape_dist_traveled'].values[0]
-                    previous_stop_shape_dist_traveled = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence - 1]['shape_dist_traveled'].values[0]
-
-                    total_distance = next_stop_shape_dist_traveled - previous_stop_shape_dist_traveled
-                    print(f"Total distance (mi): {total_distance}")
+                    #if step is a bus, add the duration to the total
+                    if step['travel_mode'] == 'TRANSIT' and step['transit_details']['line']['vehicle']['type'] == 'BUS':
+                        bus_duration += step['duration']['value']  # duration in seconds
                     
+                    #if step is a walking step, recalculate the duration assuming person is already on the bus
+                    #this will be recalculated by finding the relative position of the origin between the previous and next bus stops
+                    #currently this assumes that the walking step goes in the same direction as the bus, meaning the walking doesn't
+                    #backtrack to find the closest stop
+                    elif step['travel_mode'] == 'WALKING':
 
-                    #find the relative position of the origin between the previous and next bus stops
-                    origin_rel_pos = (total_distance - step_distance) / total_distance
-                    print(f"Relative position of origin (%): {origin_rel_pos}")
+                        #find all stops on this trip
+                        trip_all_stops = df_stop_times[df_stop_times['trip_id'] == trip_id]
 
-                    #find time between two stops in next_previous_stop_times
-                    # find arrival_time for the next stop and the previous stop
-                    next_stop_arrival_time = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence]['arrival_time'].values[0]
-                    previous_stop_arrival_time = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence - 1]['arrival_time'].values[0]
+                        #next bus stop in the direction of travel - end point of WALKING step
+                        next_stop_location = (step['end_location']['lat'], step['end_location']['lng'])
+                        next_stop_name = step['html_instructions'].replace('Walk to ', '').upper()
+                        next_stop_id = df_stops[df_stops['stop_name'] == next_stop_name]['stop_id'].values[0]
 
-                    next_stop_arrival_time = datetime.strptime(next_stop_arrival_time, "%H:%M:%S").time()
-                    previous_stop_arrival_time = datetime.strptime(previous_stop_arrival_time, "%H:%M:%S").time()
+                        #find number of stop in the stop sequence for this trip
+                        next_stop_sequence = trip_all_stops[trip_all_stops['stop_id'] == next_stop_id]['stop_sequence'].values[0]
 
-                    total_time = (datetime.combine(datetime.today(), next_stop_arrival_time) - datetime.combine(datetime.today(), previous_stop_arrival_time)).total_seconds()
-                    print(f"Total time (s): {total_time}")
+                        # filter list of all trip stops to next stop and the previous stop
+                        next_previous_stop_times = trip_all_stops[trip_all_stops['stop_sequence'].between(next_stop_sequence - 1, next_stop_sequence)]
+                        print(next_previous_stop_times)
 
-                    origin_rel_time_remaining = total_time * (1 - origin_rel_pos)
-                    print(f"Remaining time from origin to next stop (s): {origin_rel_time_remaining}")
+                        #pull distance from walking step in meters and convert to miles
+                        step_distance = step['distance']['value'] * 0.000621371
 
-                    #add to bus_duration
-                    bus_duration += origin_rel_time_remaining
+                        #find distance between two stops in next_previous_stop_times
+                        # find shape_dist_traveled for the next stop and the previous stop
+                        next_stop_shape_dist_traveled = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence]['shape_dist_traveled'].values[0]
+                        previous_stop_shape_dist_traveled = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence - 1]['shape_dist_traveled'].values[0]
+
+                        total_distance = next_stop_shape_dist_traveled - previous_stop_shape_dist_traveled
+                        print(f"Total distance (mi): {total_distance}")
+                        
+
+                        #find the relative position of the origin between the previous and next bus stops
+                        origin_rel_pos = (total_distance - step_distance) / total_distance
+                        print(f"Relative position of origin (%): {origin_rel_pos}")
+
+                        #find time between two stops in next_previous_stop_times
+                        # find arrival_time for the next stop and the previous stop
+                        next_stop_arrival_time = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence]['arrival_time'].values[0]
+                        previous_stop_arrival_time = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence - 1]['arrival_time'].values[0]
+
+                        next_stop_arrival_time = datetime.strptime(next_stop_arrival_time, "%H:%M:%S").time()
+                        previous_stop_arrival_time = datetime.strptime(previous_stop_arrival_time, "%H:%M:%S").time()
+
+                        total_time = (datetime.combine(datetime.today(), next_stop_arrival_time) - datetime.combine(datetime.today(), previous_stop_arrival_time)).total_seconds()
+                        print(f"Total time (s): {total_time}")
+
+                        origin_rel_time_remaining = total_time * (1 - origin_rel_pos)
+                        print(f"Remaining time from origin to next stop (s): {origin_rel_time_remaining}")
+
+                        #add to bus_duration
+                        bus_duration += origin_rel_time_remaining
 
             return bus_duration / 60  # convert to minutes
         
