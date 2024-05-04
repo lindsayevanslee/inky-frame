@@ -77,6 +77,9 @@ def calculate_eta_transit(origin, destination, trip_id, gmaps_client):
                         next_stop_shape_dist_traveled = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence]['shape_dist_traveled'].values[0]
                         previous_stop_shape_dist_traveled = next_previous_stop_times[next_previous_stop_times['stop_sequence'] == next_stop_sequence - 1]['shape_dist_traveled'].values[0]
 
+                        #TODO: fix error when bus is at a terminus and there is no previous stop
+                        
+                        
                         total_distance = next_stop_shape_dist_traveled - previous_stop_shape_dist_traveled
                         print(f"Total distance (mi): {total_distance}")
                         
@@ -102,7 +105,11 @@ def calculate_eta_transit(origin, destination, trip_id, gmaps_client):
                         #add to bus_duration
                         bus_duration += origin_rel_time_remaining
 
-            return bus_duration / 60  # convert to minutes
+
+            bus_duration_min = bus_duration / 60
+            print(bus_duration_min)
+
+            return bus_duration_min  # convert to minutes
         
 
     except Exception as e:
