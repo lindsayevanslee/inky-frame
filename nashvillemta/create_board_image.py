@@ -40,7 +40,10 @@ df_wrangled = df.sort_values(['eta_minutes'])
 df_wrangled['direction_id'] = df_wrangled['direction_id'].replace({1: 'To Downtown', 0: 'From Downtown'})
 
 #add column to df_wrangled converting eta_minutes to string of minutes and seconds
-df_wrangled['eta_minutes_str'] = df_wrangled['eta_minutes'].apply(lambda x: f"{int(x)}m {int((x % 1) * 60)}s")
+#df_wrangled['eta_minutes_str'] = df_wrangled['eta_minutes'].apply(lambda x: f"{int(x)}m {int((x % 1) * 60)}s")
+
+#add column to df_wrangled converting eta_minutes to string of minutes and seconds or "error" if not possible to convert
+df_wrangled['eta_minutes_str'] = df_wrangled['eta_minutes'].apply(lambda x: f"{int(x)}m {int((x % 1) * 60)}s" if not pd.isnull(x) else "error")
 
 print(df_wrangled)
 
