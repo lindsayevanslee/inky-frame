@@ -83,7 +83,14 @@ showtime_string = ''
 for i in range(len(showtimes[0]['shows'])):
 
     this_show = showtimes[0]['shows'][str(i)]['show'][0]
-    this_showtimes = ', '.join(showtimes[0]['shows'][str(i)]['showtimes'])
+
+    this_showtimes_list = showtimes[0]['shows'][str(i)]['showtimes']
+
+    #if length of showtimes element is 0, return empty string for showtimes
+    if len(this_showtimes_list) == 0:
+        this_showtimes = ''
+    else:
+        this_showtimes = ', '.join(this_showtimes_list)
 
     #concatenate this show with its showtimes into one string
     this_showtime_string = this_show + ' ' + this_showtimes + '\n'
