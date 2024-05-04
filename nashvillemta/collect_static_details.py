@@ -36,7 +36,7 @@ def load_and_process_route_files():
     merged_df = pd.merge(trips_df, routes_df, on='route_id', how='left')
 
     # Inspect the dataframe to understand direction_id usage
-    print(merged_df[['route_id', 'route_short_name', 'route_long_name', 'route_color', 'route_text_color', 'direction_id', 'trip_headsign']].drop_duplicates())
+    #print(merged_df[['route_id', 'route_short_name', 'route_long_name', 'route_color', 'route_text_color', 'direction_id', 'trip_headsign']].drop_duplicates())
 
     # Print csv of merged data
     merged_df.to_csv('temp_gtfs/merged_data.csv', index=False)
@@ -77,7 +77,7 @@ def find_nearest_stops():
             _, nearest_stop_idx = stops_kdtree.query([my_lat, my_long], k=1)
             nearest_stop = stops_filtered.iloc[nearest_stop_idx]
             
-            print(f"Nearest Stop for Route {this_route} Direction {this_direction}: {nearest_stop['stop_name']} (ID: {nearest_stop['stop_id']})")
+            #print(f"Nearest Stop for Route {this_route} Direction {this_direction}: {nearest_stop['stop_name']} (ID: {nearest_stop['stop_id']})")
 
             #convert neraest_stop to dictionary format
             nearest_stop = nearest_stop.to_dict()
@@ -92,11 +92,11 @@ def find_nearest_stops():
             list_nearest_stops.append(nearest_stop)
 
    
-    print(list_nearest_stops)
+    #print(list_nearest_stops)
 
     #convert list_nearest_stops to a dataframe
     df_nearest_stops = pd.DataFrame(list_nearest_stops)
-    print(df_nearest_stops)
+    #print(df_nearest_stops)
 
     #save df_nearest_stops to a csv file
     df_nearest_stops.to_csv(f'temp_gtfs/nearest_stops.csv', index=False)

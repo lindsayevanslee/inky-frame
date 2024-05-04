@@ -120,6 +120,9 @@ print(f"Estimated time in minutes: {eta}")
 
 
 
+# Filter out vehicles that have already passed the stop
+df_vehicles = df_vehicles.loc[~df_vehicles.has_passed]
+
 # Calculate ETA for each vehicle
 df_vehicles['eta_minutes'] = df_vehicles.apply(lambda row: calculate_eta_transit(
     (row['latitude'], row['longitude']),  # origin from vehicle position
@@ -128,18 +131,18 @@ df_vehicles['eta_minutes'] = df_vehicles.apply(lambda row: calculate_eta_transit
     gmaps), axis=1)
 
 # Print the vehicles that have not yet passed with calculated ETA
-df_vehicles = df_vehicles.loc[~df_vehicles.has_passed][['route_id', 'direction_id', 'trip_id', 'vehicle_id', 'eta_minutes']].sort_values(['route_id', 'direction_id'])
-print(df_vehicles)
+df_vehicles = df_vehicles[['route_id', 'direction_id', 'trip_id', 'vehicle_id', 'eta_minutes']].sort_values(['route_id', 'direction_id'])
+#print(df_vehicles)
 
 #read in vehicle metadata
 vehicle_metadata = pd.read_csv('temp_gtfs/merged_data.csv', dtype={'route_id': str, 'trip_id': str})[['route_id', 'direction_id', 'trip_id', 'trip_headsign', 'route_color', 'route_text_color']]
 
 #print rows of vehicle_metadata on my route
-print(vehicle_metadata.loc[vehicle_metadata['route_id'].isin(my_routes)])
+#print(vehicle_metadata.loc[vehicle_metadata['route_id'].isin(my_routes)])
 
 # Merge the vehicle data with the metadata
 vehicles_to_display = pd.merge(df_vehicles, vehicle_metadata, how='left', on=['route_id', 'direction_id', 'trip_id'])
-print(vehicles_to_display)
+#print(vehicles_to_display)
 
 # Save the data to a CSV file
 vehicles_to_display.to_csv('temp_gtfs/vehicles_to_display.csv', index=False)

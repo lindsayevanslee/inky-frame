@@ -45,8 +45,8 @@ route_vehicles = fetch_vehicles_by_route(feed_url, my_routes)
 
 #convert route_vehicles to data frame and print to csv
 df = pd.DataFrame(route_vehicles).sort_values(['route_id', 'direction_id'])
-print(df)
+#print(df)
 df.to_csv('temp_gtfs/route_vehicles.csv')
 
-for vehicle in route_vehicles:
-    print(vehicle)
+#for vehicle in route_vehicles:
+#    print(vehicle)

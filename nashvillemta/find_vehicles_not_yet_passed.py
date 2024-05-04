@@ -8,12 +8,12 @@ df_vehicles = pd.read_csv('temp_gtfs/route_vehicles.csv')
 # it looks like 16 corresponds with 1 and 13 corresponds with 0. 
 # for now recode these values
 df_vehicles['direction_id'] = df_vehicles['direction_id'].replace({16: 1, 13: 0})
-print(df_vehicles)
+#print(df_vehicles)
 
 # Merge the vehicle data with the stops data based on route_id and direction_id
 vehicles_with_nearest_stops = pd.merge(df_vehicles, df_nearest_stops, on=['route_id', 'direction_id'])
 
-print(vehicles_with_nearest_stops)
+#print(vehicles_with_nearest_stops)
 
 # Function to determine if a vehicle has passed a stop
 def has_passed_stop(vehicle_lat, vehicle_lon, stop_lat, stop_lon, vehicle_direction):
@@ -32,7 +32,7 @@ vehicles_with_nearest_stops['has_passed'] = vehicles_with_nearest_stops.apply(la
     row['direction_id']
 ), axis=1)
 
-print(vehicles_with_nearest_stops)
+#print(vehicles_with_nearest_stops)
 
 # Save the data to a CSV file
 vehicles_with_nearest_stops.sort_values(['route_id', 'direction_id']).to_csv('temp_gtfs/vehicles_with_nearest_stops.csv', index=False)
