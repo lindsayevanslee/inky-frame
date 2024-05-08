@@ -3,6 +3,7 @@ name: run belcourt spider
 on:
   schedule:
     - cron: '0 10 * * *' # daily at 10:00 (which should be 5am Nashville time?)
+  workflow_dispatch: # manual trigger
 
 jobs:
   build:
