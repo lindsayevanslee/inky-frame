@@ -165,3 +165,7 @@ cython_debug/
 #my secrets
 nashvillemta/my_secrets.py
 nashvillemta/temp_gtfs
+
+#test stuff
+belcourt/test_data
+nashvillemta/test_scripts
