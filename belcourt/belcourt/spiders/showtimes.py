@@ -26,9 +26,14 @@ class ShowtimesSpider(scrapy.Spider):
         #cycle through shows and capture showtimes
         for div_day in response.xpath('//div[@class="day today"]//ul[@class="day-event-list"]/li'): 
 
-            show_name = div_day.xpath('.//a[@class="day-event-list__title"]//text()').getall()
+            #show_name = div_day.xpath('.//a[@class="day-event-list__title"]//text() | .//span[@class="day-event-list__title"]//text()').getall()
+            show_name = div_day.xpath('.//*[@class="day-event-list__title"]//text()').getall()
 
             showtimes = div_day.xpath('.//ul[@class="day-event-list__time-list"]/li/a//text()').getall()
+
+            #if showtimes is empty, look for a description
+            if not showtimes:
+                showtimes = div_day.xpath('.//*[@class="day-event-list__description"]//text()').getall()
 
             dict_shows_all.update({j: {
                 "show": [''.join(show_name)], #in case multiple show names are captured, join them into one string in a one element list
