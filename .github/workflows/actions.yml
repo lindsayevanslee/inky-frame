@@ -16,7 +16,7 @@ jobs:
       - name: setup conda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          activate-environment: inkyenv
+          activate-environment: envs/inkyenv
           environment-file: environment.yml
           python-version: 3.11
           auto-activate-base: false
