@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
 
       - name: checkout repo content
@@ -16,7 +19,7 @@ jobs:
       - name: setup conda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          activate-environment: envs/inkyenv
+          activate-environment: inkyenv
           environment-file: environment.yml
           python-version: 3.11
           auto-activate-base: false
