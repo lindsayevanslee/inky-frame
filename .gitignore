@@ -165,6 +165,7 @@ cython_debug/
 #my secrets
 nashvillemta/my_secrets.py
 nashvillemta/temp_gtfs
+nashvillemta/departure_board.png
 
 #test stuff
 belcourt/test_data
