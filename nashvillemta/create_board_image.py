@@ -21,7 +21,7 @@ image_width = 800
 image_height = 480
 anchor_x = 10
 anchor_y = 200
-line_height = font_size + 5
+#line_height = font_size + 5
 anchor_y_title = 10
 
 title = "Bus Departures Near Me"
@@ -47,6 +47,9 @@ df_wrangled['eta_minutes_str'] = df_wrangled['eta_minutes'].apply(lambda x: f"{i
 
 print(df_wrangled)
 
+#print number of rows in df_wrangled
+print(df_wrangled.shape[0])
+
 #current time
 now = datetime.now()
 current_datetime = now.strftime("%Y-%m-%d %H:%M:%S")
@@ -57,6 +60,13 @@ print("Current Time =", current_datetime)
 # Create a blank image
 image = Image.new('RGB', (image_width, image_height), color = 'white')
 draw = ImageDraw.Draw(image)
+
+#update font size if there are more than 6 rows
+if df_wrangled.shape[0] > 6:
+    font_size = font_size * (5.5/df_wrangled.shape[0])
+
+#set line height based on font size
+line_height = font_size + 5
 
 # Set the font
 font = ImageFont.truetype(font_path, font_size)
