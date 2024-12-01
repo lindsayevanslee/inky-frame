@@ -16,6 +16,9 @@ jobs:
       - name: checkout repo content
         uses: actions/checkout@v2 # checkout the repository content to github runner
 
+      - name: Remove Existing Conda Environment
+        run: conda remove --name inkyenv --all --yes
+      
       - name: setup conda
         uses: conda-incubator/setup-miniconda@v3
         with:
