@@ -7,5 +7,6 @@ dependencies:
   - pip=23.2.1
   - Pillow=11.0.0
   - Scrapy=2.12.0
+  - pyopenssl >= 23.2.0
 
 prefix: ./envs
