@@ -14,8 +14,8 @@ jobs:
     steps:
 
       - name: checkout repo content
-        uses: actions/checkout@v2 # checkout the repository content to github runner
-
+        uses: actions/checkout@v4 # checkout the repository content to github runner
+      
       - name: setup conda
         uses: conda-incubator/setup-miniconda@v3
         with:
