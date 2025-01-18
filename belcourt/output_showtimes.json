@@ -1,3 +1,3 @@
 [
-{"currenttime": "2025-01-17 10:19:04", "date": ["Friday, Jan 17"], "shows": {"0": {"show": ["THE BRUTALIST (35mm)"], "showtimes": ["11:40am", "3:50pm", "8:00pm"]}, "1": {"show": ["NICKEL BOYS"], "showtimes": ["12:40pm", "3:30pm", "6:25pm", "9:30pm"]}, "2": {"show": ["NOSFERATU"], "showtimes": ["1:15pm", "4:00pm", "6:45pm", "9:20pm"]}}}
+{"currenttime": "2025-01-18 10:17:15", "date": ["Saturday, Jan 18"], "shows": {"0": {"show": ["FLOW"], "showtimes": ["10:45am"]}, "1": {"show": ["THE BRUTALIST (35mm)"], "showtimes": ["11:40am", "3:50pm", "8:00pm"]}, "2": {"show": ["NICKEL BOYS"], "showtimes": ["12:40pm", "3:30pm*", "6:25pm**", "9:30pm"]}, "3": {"show": ["NOSFERATU"], "showtimes": ["1:15pm", "4:00pm", "6:45pm", "9:20pm"]}}}
 ]
