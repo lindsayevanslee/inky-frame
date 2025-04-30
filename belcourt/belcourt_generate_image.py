@@ -3,6 +3,8 @@
 #after running spider, navigate to belcourt folder before running
 #cd ../..
 
+print("Starting Belcourt showtime image generation...")
+
 ### setup -------------------------
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -26,8 +28,11 @@ def insert_newlines(string, every=64):
     return '\n        '.join(lines)
 
 #read showtime info
+print("Reading showtime data from output_showtimes.json...")
 with open("output_showtimes.json", "rt") as f:
     showtimes = json.load(f)
+
+print(f"Processing showtimes for date: {showtimes[0]['date'][0]}")
 
 #set dimensions
 width = 800
@@ -79,10 +84,13 @@ imgDraw.text((width - 10, 70), anchor = 'rt', text = subtitle, font=font_subtitl
 
 #initialize showtimes string
 showtime_string = ''
+num_shows = len(showtimes[0]['shows'])
+print(f"Found {num_shows} shows to process")
 
 for i in range(len(showtimes[0]['shows'])):
 
     this_show = showtimes[0]['shows'][str(i)]['show'][0]
+    print(f"Processing show: {this_show}")
 
     this_showtimes_list = showtimes[0]['shows'][str(i)]['showtimes']
 
@@ -115,6 +123,6 @@ imgDraw.text((10, 100), anchor = 'la', text = showtime_string, font=font_show, f
 ### print -----------------------------------
 
 #save result
+print("Saving images...")
 background.save('result.jpg', progressive = False)
-
 background.save('result_optimized.jpg', progressive = False, optimize = True, quality = 30)
