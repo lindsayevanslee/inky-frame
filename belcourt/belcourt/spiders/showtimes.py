@@ -30,6 +30,11 @@ class ShowtimesSpider(scrapy.Spider):
             show_name = div_day.xpath('.//*[@class="day-event-list__title"]//text()').getall()
 
             showtimes = div_day.xpath('.//ul[@class="day-event-list__time-list"]/li/a//text()').getall()
+            
+            #remove empty strings from showtimes
+            showtimes = [time for time in showtimes if time.strip()]
+
+            # print(showtimes)
 
             #if showtimes is empty, look for a description
             if not showtimes:
