@@ -24,11 +24,12 @@ gc.collect()  # We're really gonna need that RAM!
 def status_handler(mode, status, ip):
     print(mode, status, ip)
 
-
+print_log("Connecting to WiFi...")
 network_manager = NetworkManager(secrets.COUNTRY, status_handler=status_handler)
 uasyncio.get_event_loop().run_until_complete(network_manager.client(secrets.WIFI_SSID, secrets.WIFI_PASSWORD))
 
-
+print_log("Connected to WiFi!")
+print_log("Connecting to SD card...")
 graphics = PicoGraphics(DISPLAY)
 
 WIDTH, HEIGHT = graphics.get_bounds()
@@ -40,7 +41,7 @@ sd = sdcard.SDCard(sd_spi, machine.Pin(22))
 uos.mount(sd, "/sd")
 gc.collect()  # Claw back some RAM!
 
-
+print_log("Downloading image...")
 url = ENDPOINT
 
 
@@ -57,15 +58,19 @@ with open(FILENAME, "wb") as f:
 socket.close()
 gc.collect()  # We really are tight on RAM!
 
+print_log("Image downloaded!")
 
+print_log("Decoding image...")
 jpeg = jpegdec.JPEG(graphics)
 gc.collect()  # For good measure...
 
 graphics.set_pen(1)
 graphics.clear()
 
+print_log("Drawing image...")
 jpeg.open_file(FILENAME)
 jpeg.decode() 
 
 
 graphics.update()
+print_log("Image drawn!")
