@@ -41,13 +41,15 @@ print(inky_frame.rtc.datetime())
 print_log("entering while loop")
 
 #run showtimes_from_web.py on start-up
-while True:
-    print_log("starting showtimes script")
-    with open("showtimes_from_web.py") as f:
-        exec(f.read())
-    
-    print_log("finished showtimes script")
+try:
+    while True:
+        print_log("starting showtimes script")
+        with open("showtimes_from_web.py") as f:
+            exec(f.read())
+        
+        print_log("finished showtimes script")
 
-    print_log("going to sleep now")
-    inky_frame.sleep_for(720)
-
+        print_log("going to sleep now")
+        inky_frame.sleep_for(720)
+except Exception as e:
+    print_log(f"ERROR: {type(e).__name__}: {str(e)}")
