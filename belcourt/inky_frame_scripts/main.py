@@ -3,6 +3,8 @@ import machine
 import gc
 import builtins
 import inky_frame
+# from sync_time import sync_time_via_ntp
+
 
 # Functions needed to log messages to a file error_log.txt
 # adapted from Pimoroni forum thread: https://forums.pimoroni.com/t/inky-frame-not-refreshing-screen-on-battery-power-using-inky-frame-sleep-for/23174/7 
@@ -20,22 +22,12 @@ def print_log(*args, **kwargs):
     log(message)
     builtins.print(*args, **kwargs)
 
-"""
+print_log("=== STARTING MAIN PROGRAM ===")
 
-#If you are getting weird errors after sleep_for(), 
-#there may be an issue with the clocks being out of sync.
-#Try running this code in console to sync the clocks while the inky frame is plugged in to USB
 
-inky_frame.pcf_to_pico_rtc()  # Sync Inky RTC time to Pico's RTC
+# print_log("Try to sync time on startup")
 
-year, month, day, dow, hour, minute, second, _ = machine.RTC().datetime()
-
-inky_frame.set_time()  # Sets both the Inky and Pico RTC
-
-print(time.localtime())
-print(inky_frame.rtc.datetime())
-
-"""
+# sync_time_via_ntp(print_log)
 
 
 print_log("entering while loop")
