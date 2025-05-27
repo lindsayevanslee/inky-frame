@@ -3,7 +3,7 @@ import machine
 import gc
 import builtins
 import inky_frame
-# from sync_time import sync_time_via_ntp
+from sync_time import sync_time_via_ntp
 
 
 # Functions needed to log messages to a file error_log.txt
@@ -25,9 +25,9 @@ def print_log(*args, **kwargs):
 print_log("=== STARTING MAIN PROGRAM ===")
 
 
-# print_log("Try to sync time on startup")
+print_log("Try to sync time on startup")
 
-# sync_time_via_ntp(print_log)
+sync_time_via_ntp(print_log)
 
 
 print_log("entering while loop")
