@@ -9068,4 +9068,317 @@
 2026-03-23 02:30:45 - Network status: Client - True - 192.168.86.30
 2026-03-23 02:30:45 - Connected to WiFi!
 2026-03-23 02:30:45 - Connecting to SD card...
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: WDT_RESET (watchdog)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 592)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2026, 3, 23, 2, 47, 54, 0)
+2021-01-01 00:00:01 - Memory: 18432/200320 bytes used (9.2%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
+2021-01-01 00:00:03 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client True 192.168.86.30
+2021-01-01 00:00:06 - Getting time from NTP server (attempt 1/3)...
+2026-03-23 02:47:58 - Current time set to: 2026-03-23 02:47:58
+2026-03-23 02:47:58 - Syncing Inky Frame RTC...
+2026-03-23 02:47:59 - Pico RTC time: 2026-03-23 02:47:59
+2026-03-23 02:47:59 - Inky PCF RTC time: 2026-03-23 47:59:00
+2026-03-23 02:47:59 - WiFi disconnected after time sync
+2026-03-23 02:47:59 - entering while loop
+2026-03-23 02:47:59 - === Starting cycle #1 ===
+2026-03-23 02:47:59 - starting showtimes script
+2026-03-23 02:47:59 - Connecting to WiFi...
+2026-03-23 02:47:59 - Network status: Client - None - 0.0.0.0
+2026-03-23 02:48:00 - Network status: Client - None - 0.0.0.0
+2026-03-23 02:48:01 - Network status: Client - None - 0.0.0.0
+2026-03-23 02:48:02 - Network status: Client - True - 192.168.86.30
+2026-03-23 02:48:02 - Connected to WiFi!
+2026-03-23 02:48:02 - Connecting to SD card...
+2026-03-23 02:48:03 - SD card mounted successfully
+2026-03-23 02:48:03 - Downloading image...
+2026-03-23 02:48:03 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+2026-03-23 02:48:05 - Image downloaded!
+2026-03-23 02:48:05 - Decoding image...
+2026-03-23 02:48:08 - Drawing image...
+2026-03-23 02:49:02 - Image drawn!
+2026-03-22 21:50:50 - === STARTING MAIN PROGRAM ===
+2026-03-22 21:50:50 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2026-03-22 21:50:51 - Wake reason: WDT_RESET (watchdog)
+2026-03-22 21:50:51 - Battery/Vsys voltage: 5.04V (raw ADC: 33336)
+2026-03-22 21:50:51 - Inky RTC datetime: (2026, 3, 23, 2, 50, 52, 0)
+2026-03-22 21:50:51 - Memory: 17888/200320 bytes used (8.9%)
+2026-03-22 21:50:51 - Try to sync time on startup
+2026-03-22 21:50:51 - Attempting to sync time via NTP...
+2026-03-22 21:50:51 - Connecting to WiFi for time sync...
+2026-03-22 21:50:51 - Network: Client True 192.168.86.30
+2026-03-22 21:50:51 - Getting time from NTP server (attempt 1/3)...
+2026-03-23 02:50:52 - Current time set to: 2026-03-23 02:50:52
+2026-03-23 02:50:52 - Syncing Inky Frame RTC...
+2026-03-23 02:50:52 - Pico RTC time: 2026-03-23 02:50:52
+2026-03-23 02:50:52 - Inky PCF RTC time: 2026-03-23 02:50:52
+2026-03-23 02:50:52 - WiFi disconnected after time sync
+2026-03-23 02:50:52 - entering while loop
+2026-03-23 02:50:52 - === Starting cycle #1 ===
+2026-03-23 02:50:52 - starting showtimes script
+2026-03-23 02:50:52 - Connecting to WiFi...
+2026-03-23 02:50:52 - Network status: Client - None - 0.0.0.0
+2026-03-23 02:50:53 - Network status: Client - None - 0.0.0.0
+2026-03-23 02:50:54 - Network status: Client - None - 0.0.0.0
+2026-03-23 02:50:55 - Network status: Client - True - 192.168.86.30
+2026-03-23 02:50:55 - Connected to WiFi!
+2026-03-23 02:50:55 - Connecting to SD card...
+2026-03-23 02:50:56 - SD card mounted successfully
+2026-03-23 02:50:56 - Downloading image...
+2026-03-23 02:50:56 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+2026-03-23 02:50:58 - Image downloaded!
+2026-03-23 02:50:58 - Decoding image...
+2026-03-23 02:51:01 - Drawing image...
+2026-03-23 02:51:54 - Image drawn!
+2026-03-23 02:51:54 - finished showtimes script
+2026-03-23 02:51:54 - Pre-sleep status check:
+2026-03-23 02:51:54 - Battery/Vsys voltage: 5.03V (raw ADC: 33304)
+2026-03-23 02:51:55 - Inky RTC datetime: (2026, 3, 23, 2, 51, 55, 0)
+2026-03-23 02:51:55 - Memory: 52112/200320 bytes used (26.0%)
+2026-03-23 02:51:55 - going to sleep now
+2026-03-23 02:51:55 - Attempting inky_frame.sleep_for(720 minutes)
+2026-03-23 02:51:55 - If this is the last message, deep sleep worked!
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 592)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2026, 3, 23, 3, 0, 43, 0)
+2021-01-01 00:00:01 - Memory: 17760/200320 bytes used (8.9%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
+2021-01-01 00:00:03 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client True 192.168.86.30
+2021-01-01 00:00:06 - Getting time from NTP server (attempt 1/3)...
+2026-03-23 03:00:52 - Current time set to: 2026-03-23 03:00:52
+2026-03-23 03:00:52 - Syncing Inky Frame RTC...
+2026-03-23 03:00:52 - Pico RTC time: 2026-03-23 03:00:52
+2026-03-23 03:00:52 - Inky PCF RTC time: 2026-03-23 03:00:52
+2026-03-23 03:00:52 - WiFi disconnected after time sync
+2026-03-23 03:00:52 - entering while loop
+2026-03-23 03:00:52 - === Starting cycle #1 ===
+2026-03-23 03:00:52 - starting showtimes script
+2026-03-23 03:00:52 - Connecting to WiFi...
+2026-03-23 03:00:52 - Network status: Client - None - 0.0.0.0
+2026-03-23 03:00:53 - Network status: Client - None - 0.0.0.0
+2026-03-23 03:00:54 - Network status: Client - None - 0.0.0.0
+2026-03-23 03:00:55 - Network status: Client - True - 192.168.86.30
+2026-03-23 03:00:55 - Connected to WiFi!
+2026-03-23 03:00:55 - Connecting to SD card...
+2026-03-23 03:00:56 - SD card mounted successfully
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 592)
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.08V (raw ADC: 544)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2000, 1, 1, 0, 8, 1, 5)
+2021-01-01 00:00:01 - WARNING: RTC has lost time (battery dead?)
+2021-01-01 00:00:01 - Memory: 17760/200320 bytes used (8.9%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:05 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client None 0.0.0.0
+2021-01-01 00:00:07 - Network: Client None 0.0.0.0
+2021-01-01 00:00:08 - Network: Client None 0.0.0.0
+2021-01-01 00:00:09 - Network: Client True 192.168.86.30
+2021-01-01 00:00:09 - Getting time from NTP server (attempt 1/3)...
+2026-03-27 01:48:01 - Current time set to: 2026-03-27 01:48:01
+2026-03-27 01:48:01 - Syncing Inky Frame RTC...
+2026-03-27 01:48:01 - Pico RTC time: 2026-03-27 01:48:01
+2026-03-27 01:48:01 - Inky PCF RTC time: 2026-03-27 01:48:01
+2026-03-27 01:48:01 - WiFi disconnected after time sync
+2026-03-27 01:48:01 - entering while loop
+2026-03-27 01:48:01 - === Starting cycle #1 ===
+2026-03-27 01:48:01 - starting showtimes script
+2026-03-27 01:48:01 - Connecting to WiFi...
+2026-03-27 01:48:01 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:48:02 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:48:03 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:48:04 - Network status: Client - True - 192.168.86.30
+2026-03-27 01:48:04 - Connected to WiFi!
+2026-03-27 01:48:04 - Connecting to SD card...
+2026-03-27 01:48:05 - SD card mounted successfully
+2026-03-27 01:48:05 - Downloading image...
+2026-03-27 01:48:05 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+2026-03-27 01:48:07 - Image downloaded!
+2026-03-27 01:48:07 - Decoding image...
+2026-03-27 01:48:10 - Drawing image...
+2026-03-27 01:49:03 - Image drawn!
+2026-03-27 01:49:04 - finished showtimes script
+2026-03-27 01:49:04 - Pre-sleep status check:
+2026-03-27 01:49:04 - Battery/Vsys voltage: 4.68V (raw ADC: 30951)
+2026-03-27 01:49:04 - Inky RTC datetime: (2026, 3, 27, 1, 49, 4, 4)
+2026-03-27 01:49:04 - Memory: 52128/200320 bytes used (26.0%)
+2026-03-27 01:49:04 - going to sleep now
+2026-03-27 01:49:04 - Attempting inky_frame.sleep_for(2 minutes) - TEST MODE
+2026-03-27 01:49:04 - If this is the last message, deep sleep worked!
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 592)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2026, 3, 27, 1, 51, 0, 4)
+2021-01-01 00:00:01 - Memory: 17760/200320 bytes used (8.9%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
+2021-01-01 00:00:03 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client None 0.0.0.0
+2021-01-01 00:00:07 - Network: Client None 0.0.0.0
+2021-01-01 00:00:08 - Network: Client True 192.168.86.30
+2021-01-01 00:00:08 - Getting time from NTP server (attempt 1/3)...
+2026-03-27 01:51:07 - Current time set to: 2026-03-27 01:51:07
+2026-03-27 01:51:07 - Syncing Inky Frame RTC...
+2026-03-27 01:51:08 - Pico RTC time: 2026-03-27 01:51:08
+2026-03-27 01:51:08 - Inky PCF RTC time: 2026-03-27 01:51:08
+2026-03-27 01:51:08 - WiFi disconnected after time sync
+2026-03-27 01:51:08 - entering while loop
+2026-03-27 01:51:08 - === Starting cycle #1 ===
+2026-03-27 01:51:08 - starting showtimes script
+2026-03-27 01:51:08 - Connecting to WiFi...
+2026-03-27 01:51:08 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:51:09 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:51:10 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:51:11 - Network status: Client - True - 192.168.86.30
+2026-03-27 01:51:11 - Connected to WiFi!
+2026-03-27 01:51:11 - Connecting to SD card...
+2026-03-27 01:51:12 - SD card mounted successfully
+2026-03-27 01:51:12 - Downloading image...
+2026-03-27 01:51:12 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+2026-03-27 01:51:14 - Image downloaded!
+2026-03-27 01:51:14 - Decoding image...
+2026-03-27 01:51:17 - Drawing image...
+2026-03-27 01:52:10 - Image drawn!
+2026-03-27 01:52:10 - finished showtimes script
+2026-03-27 01:52:10 - Pre-sleep status check:
+2026-03-27 01:52:11 - Battery/Vsys voltage: 4.67V (raw ADC: 30919)
+2026-03-27 01:52:11 - Inky RTC datetime: (2026, 3, 27, 1, 52, 11, 4)
+2026-03-27 01:52:11 - Memory: 52128/200320 bytes used (26.0%)
+2026-03-27 01:52:11 - going to sleep now
+2026-03-27 01:52:11 - Attempting inky_frame.sleep_for(2 minutes) - TEST MODE
+2026-03-27 01:52:11 - If this is the last message, deep sleep worked!
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 592)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2026, 3, 27, 1, 54, 0, 4)
+2021-01-01 00:00:01 - Memory: 17760/200320 bytes used (8.9%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:05 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client True 192.168.86.30
+2021-01-01 00:00:06 - Getting time from NTP server (attempt 1/3)...
+2026-03-27 01:54:04 - Current time set to: 2026-03-27 01:54:04
+2026-03-27 01:54:04 - Syncing Inky Frame RTC...
+2026-03-27 01:54:04 - Pico RTC time: 2026-03-27 01:54:04
+2026-03-27 01:54:04 - Inky PCF RTC time: 2026-03-27 01:54:04
+2026-03-27 01:54:04 - WiFi disconnected after time sync
+2026-03-27 01:54:04 - entering while loop
+2026-03-27 01:54:04 - === Starting cycle #1 ===
+2026-03-27 01:54:04 - starting showtimes script
+2026-03-27 01:54:04 - Connecting to WiFi...
+2026-03-27 01:54:04 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:54:05 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:54:06 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:54:07 - Network status: Client - True - 192.168.86.30
+2026-03-27 01:54:07 - Connected to WiFi!
+2026-03-27 01:54:07 - Connecting to SD card...
+2026-03-27 01:54:08 - SD card mounted successfully
+2026-03-27 01:54:08 - Downloading image...
+2026-03-27 01:54:08 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+2026-03-27 01:54:10 - Image downloaded!
+2026-03-27 01:54:10 - Decoding image...
+2026-03-27 01:54:13 - Drawing image...
+2026-03-27 01:55:06 - Image drawn!
+2026-03-27 01:55:06 - finished showtimes script
+2026-03-27 01:55:06 - Pre-sleep status check:
+2026-03-27 01:55:06 - Battery/Vsys voltage: 4.66V (raw ADC: 30871)
+2026-03-27 01:55:06 - Inky RTC datetime: (2026, 3, 27, 1, 55, 7, 4)
+2026-03-27 01:55:06 - Memory: 52128/200320 bytes used (26.0%)
+2026-03-27 01:55:07 - going to sleep now
+2026-03-27 01:55:07 - Attempting inky_frame.sleep_for(2 minutes) - TEST MODE
+2026-03-27 01:55:07 - If this is the last message, deep sleep worked!
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 592)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2000, 1, 1, 0, 0, 2, 5)
+2021-01-01 00:00:01 - WARNING: RTC has lost time (battery dead?)
+2021-01-01 00:00:01 - Memory: 17760/200320 bytes used (8.9%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:05 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client True 192.168.86.30
+2021-01-01 00:00:06 - Getting time from NTP server (attempt 1/3)...
+2026-03-27 01:55:39 - Current time set to: 2026-03-27 01:55:39
+2026-03-27 01:55:39 - Syncing Inky Frame RTC...
+2026-03-27 01:55:40 - Pico RTC time: 2026-03-27 01:55:40
+2026-03-27 01:55:40 - Inky PCF RTC time: 2026-03-27 01:55:40
+2026-03-27 01:55:40 - WiFi disconnected after time sync
+2026-03-27 01:55:40 - entering while loop
+2026-03-27 01:55:40 - === Starting cycle #1 ===
+2026-03-27 01:55:40 - starting showtimes script
+2026-03-27 01:55:40 - Connecting to WiFi...
+2026-03-27 01:55:40 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:55:41 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:55:42 - Network status: Client - None - 0.0.0.0
+2026-03-27 01:55:43 - Network status: Client - True - 192.168.86.30
+2026-03-27 01:55:43 - Connected to WiFi!
+2026-03-27 01:55:43 - Connecting to SD card...
+2026-03-27 01:55:44 - SD card mounted successfully
+2026-03-27 01:55:44 - Downloading image...
+2026-03-27 01:55:44 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+2026-03-27 01:55:46 - Image downloaded!
+2026-03-27 01:55:46 - Decoding image...
+2026-03-27 01:55:49 - Drawing image...
+2026-03-27 01:56:42 - Image drawn!
+2026-03-27 01:56:43 - finished showtimes script
+2026-03-27 01:56:43 - Pre-sleep status check:
+2026-03-27 01:56:43 - Battery/Vsys voltage: 5.03V (raw ADC: 33304)
+2026-03-27 01:56:43 - Inky RTC datetime: (2026, 3, 27, 1, 56, 43, 4)
+2026-03-27 01:56:43 - Memory: 52128/200320 bytes used (26.0%)
+2026-03-27 01:56:43 - going to sleep now
+2026-03-27 01:56:43 - Attempting inky_frame.sleep_for(2 minutes) - TEST MODE
+2026-03-27 01:56:43 - If this is the last message, deep sleep worked!
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 608)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2106, 3, 37, 1, 58, 14, 4)
+2021-01-01 00:00:01 - Memory: 17760/200320 bytes used (8.9%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
 
