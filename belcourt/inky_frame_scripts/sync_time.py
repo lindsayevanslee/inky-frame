@@ -96,8 +96,9 @@ def format_time(t):
 
 def format_inky_time(t):
     """Format Inky Frame RTC time tuple into a readable string"""
-    # Inky Frame PCF RTC returns: (year, month, day, weekday, hour, minute, second)
-    return '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(t[0], t[1], t[2], t[4], t[5], t[6])
+    # Inky Frame PCF RTC returns: (year, month, day, hour, minute, second, weekday)
+    # Weekday is at the END (index 6), not at index 3
+    return '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(t[0], t[1], t[2], t[3], t[4], t[5])
 
 # This allows the module to be run directly for testing
 if __name__ == "__main__":

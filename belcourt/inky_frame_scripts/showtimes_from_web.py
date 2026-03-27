@@ -114,8 +114,8 @@ except Exception as e:
 finally:
     # Clean up
     try:
-        if os.path.exists(FILENAME):
-            os.remove(FILENAME)
+        if FILENAME in uos.listdir("/sd"):
+            uos.remove(FILENAME)
     except:
         pass
     gc.collect()
