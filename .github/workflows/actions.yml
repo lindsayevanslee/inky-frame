@@ -35,8 +35,11 @@ jobs:
       - name: execute spider script # run showtimes.py
         run: |
           cd belcourt/belcourt/spiders
-          scrapy runspider showtimes.py
-          scrapy runspider showtimes.py -O ../../output_showtimes.json
+          # CLOSESPIDER_ERRORCOUNT=1 makes scrapy exit non-zero if anything is
+          # logged at ERROR/CRITICAL (e.g. the Twisted ImportError), so a broken
+          # crawl fails the build instead of silently committing stale output.
+          scrapy runspider showtimes.py -O ../../output_showtimes.json \
+            --set=CLOSESPIDER_ERRORCOUNT=1
 
       - name: generate jpg # run belcourt_generate_image.py
         run: |
