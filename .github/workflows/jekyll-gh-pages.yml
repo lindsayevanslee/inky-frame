@@ -8,7 +8,12 @@ on:
 
   # Runs on a schedule
   schedule:
-    - cron: '30 10 * * *' # daily at 10:30 (which should be 5:30am Nashville time?)
+    # 10:37 UTC. GitHub cron is UTC-only and runs on a best-effort basis,
+    # so we use an off-:30 minute to avoid contended queues. Scheduled 30 min
+    # after the belcourt spider (10:07 UTC) so it picks up fresh output.
+    # = 5:37am Central during CDT (Mar-Nov). Known limitation: during CST
+    # (winter) Central is UTC-6, so this runs at 4:37am instead of 5:37am.
+    - cron: '37 10 * * *'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

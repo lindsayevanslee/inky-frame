@@ -2,7 +2,11 @@ name: run belcourt spider
 
 on:
   schedule:
-    - cron: '0 10 * * *' # daily at 10:00 (which should be 5am Nashville time?)
+    # 10:07 UTC. GitHub cron is UTC-only and runs on a best-effort basis,
+    # so we use an off-:00 minute to avoid the heavily-contended top-of-hour
+    # queue. = 5:07am Central during CDT (Mar-Nov). Known limitation: during
+    # CST (winter) Central is UTC-6, so this runs at 4:07am instead of 5:07am.
+    - cron: '7 10 * * *'
   workflow_dispatch: # manual trigger
 
 jobs:
