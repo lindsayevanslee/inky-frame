@@ -6,14 +6,27 @@ on:
   push:
     branches: ["main"]
 
-  # Runs on a schedule
-  schedule:
-    # 10:37 UTC. GitHub cron is UTC-only and runs on a best-effort basis,
-    # so we use an off-:30 minute to avoid contended queues. Scheduled 30 min
-    # after the belcourt spider (10:07 UTC) so it picks up fresh output.
-    # = 5:37am Central during CDT (Mar-Nov). Known limitation: during CST
-    # (winter) Central is UTC-6, so this runs at 4:37am instead of 5:37am.
-    - cron: '37 10 * * *'
+  # Runs after the belcourt spider finishes. The spider pushes its
+  # "Ran belcourt spider" commit using GITHUB_TOKEN, and GitHub deliberately
+  # does NOT fire `push:` for token-authored commits (recursion guard), so
+  # we chain off the spider's completion instead. Note: GitHub only honors
+  # workflow_run when this file is on the default branch.
+  workflow_run:
+    workflows: ["run belcourt spider"]
+    types: [completed]
+
+  # Disabled: jekyll now deploys via the workflow_run trigger above
+  # (fires when the belcourt spider completes, which runs on its own
+  # ~10:07 UTC schedule). The standalone cron below is redundant. Kept
+  # commented for easy restore if jekyll ever needs a schedule
+  # independent of the spider.
+  # schedule:
+  #   # 10:37 UTC. GitHub cron is UTC-only and runs on a best-effort basis,
+  #   # so we use an off-:30 minute to avoid contended queues. Scheduled 30 min
+  #   # after the belcourt spider (10:07 UTC) so it picks up fresh output.
+  #   # = 5:37am Central during CDT (Mar-Nov). Known limitation: during CST
+  #   # (winter) Central is UTC-6, so this runs at 4:37am instead of 5:37am.
+  #   - cron: '37 10 * * *'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -34,6 +47,13 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    # When triggered by the spider completing, only deploy if it SUCCEEDED.
+    # workflow_run fires on every conclusion (incl. failure/cancelled), so
+    # without this a broken scrape would still redeploy stale output. Other
+    # triggers (push/schedule/workflow_dispatch) are unaffected.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
