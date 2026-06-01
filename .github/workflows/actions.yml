@@ -1,13 +1,17 @@
 name: run belcourt spider
 
 on:
-  schedule:
-    # 10:07 UTC. GitHub cron is UTC-only and runs on a best-effort basis,
-    # so we use an off-:00 minute to avoid the heavily-contended top-of-hour
-    # queue. = 5:07am Central during CDT (Mar-Nov). Known limitation: during
-    # CST (winter) Central is UTC-6, so this runs at 4:07am instead of 5:07am.
-    - cron: '7 10 * * *'
-  workflow_dispatch: # manual trigger
+  # Scheduling moved to cron-job.org, which fires an HTTP request to GitHub's
+  # workflow_dispatch API at a precise time. GitHub's native `schedule:` cron
+  # runs best-effort and is frequently delayed (often 30+ min, worse near the
+  # top of the hour), so an external trigger gives us reliable on-time runs.
+  # cron-job.org also honors a timezone, so we get 5:07am Central year-round
+  # with no DST drift. The old GitHub cron is kept below for easy restore.
+  #
+  # schedule:
+  #   # 10:07 UTC = ~5:07am Central (CDT). Best-effort / often delayed.
+  #   - cron: '7 10 * * *'
+  workflow_dispatch: # manual trigger + cron-job.org external trigger
 
 jobs:
   build:
