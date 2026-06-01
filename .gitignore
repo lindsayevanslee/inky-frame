@@ -170,3 +170,9 @@ nashvillemta/departure_board.png
 #test stuff
 belcourt/test_data
 nashvillemta/test_scripts
+
+# Derived analysis artifacts — regenerate with analysis/spider_delay_analysis.py.
+# The raw archive (data/spider_runs_raw.json), schedule_history.json, and
+# manifest.json ARE tracked (they can't be regenerated once GitHub purges runs).
+analysis/data/spider_delays.csv
+analysis/spider_delay.png

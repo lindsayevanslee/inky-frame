@@ -1,0 +1,10 @@
+{
+  "last_refreshed_utc": "2026-06-01T21:23:51.084179+00:00",
+  "pulled_from_live_api": false,
+  "source": "github.com/lindsayevanslee/inky-frame workflow actions.yml",
+  "record_count": 416,
+  "scheduled_run_count": 412,
+  "earliest_run_started_utc": "2025-04-17T10:21:48Z",
+  "latest_run_started_utc": "2026-06-01T20:05:51Z",
+  "note": "Archive is append-only via merge-by-id; it may reach FURTHER back than GitHub's live API still retains, because purged runs captured in earlier refreshes are preserved here."
+}
