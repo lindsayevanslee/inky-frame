@@ -1,0 +1,63 @@
+name: schedule delay canary
+
+# Purpose: measure GitHub Actions scheduled-queue DELAY as an ongoing
+# phenomenon, decoupled from the belcourt spider.
+#
+# The spider's scheduling moved to cron-job.org (workflow_dispatch), so the
+# spider no longer rides GitHub's scheduled queue and can't report that delay.
+# This canary fills that gap: it does NO real work and touches NO spider files,
+# so it cannot conflict with the spider or its cron-job.org trigger. It exists
+# only so GitHub records a run whose (scheduled time vs actual start) reveals
+# how late the scheduled queue is today.
+#
+# How delay is recovered: GitHub doesn't expose the intended cron instant to the
+# job, but we know it from the cron below (10:05 UTC). Analysis compares each
+# run's `run_started_at` (from the Actions API) to that 10:05 UTC fire time --
+# the same method used in analysis/spider_delay_analysis.py. Nothing here needs
+# to be committed; the run metadata IS the dataset. Pull it with the refresh
+# tooling pointed at this workflow file.
+#
+# The cron matches the spider's LAST GitHub schedule (10:07 UTC) so the canary
+# sits in the exact scheduled-queue slot the spider used to occupy. Its delay is
+# therefore what the spider WOULD still be suffering on GitHub's schedule -- the
+# direct "what did moving to cron-job.org save?" measurement. (GitHub cron is
+# UTC-only, so we match the literal 10:07 UTC value; cron-job.org separately
+# fires the real spider at 5:07am Central, which is 10:07 UTC only during CDT.)
+
+on:
+  schedule:
+    - cron: '7 10 * * *'   # 10:07 UTC daily -- the spider's old GitHub slot
+  workflow_dispatch:        # allow a manual sanity run
+
+# Defensive: never let two canary runs overlap (keeps the dataset one-per-day).
+concurrency:
+  group: schedule-delay-canary
+  cancel-in-progress: false
+
+permissions:
+  contents: read            # read-only; the canary writes nothing to the repo
+
+jobs:
+  mark:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record timing
+        run: |
+          # Intended fire time per the cron above. Kept here only so the log is
+          # self-explanatory; the authoritative comparison is done in analysis
+          # against run_started_at from the API.
+          SCHEDULED_UTC="$(date -u +%Y-%m-%dT10:07:00Z)"
+          ACTUAL_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "scheduled (cron): $SCHEDULED_UTC"
+          echo "actual start:     $ACTUAL_UTC"
+          echo "event:            ${GITHUB_EVENT_NAME}"
+          # Surface it in the run summary for at-a-glance inspection too.
+          {
+            echo "### Schedule delay canary"
+            echo ""
+            echo "| field | value |"
+            echo "|---|---|"
+            echo "| scheduled (cron) | $SCHEDULED_UTC |"
+            echo "| actual start | $ACTUAL_UTC |"
+            echo "| trigger | ${GITHUB_EVENT_NAME} |"
+          } >> "$GITHUB_STEP_SUMMARY"
