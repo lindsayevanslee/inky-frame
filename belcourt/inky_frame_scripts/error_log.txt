@@ -14981,4 +14981,13 @@
 2026-06-07 23:24:06 - Pre-sleep status check:
 2026-06-07 23:24:06 - Battery/Vsys voltage: 4.40V (raw ADC: 29159)
 2026-06-07 23:24:06 - Inky RTC datetime: (2026, 6, 7, 23, 24, 6, 6)
+2026-06-14 14:01:10 - === STARTING MAIN PROGRAM ===
+2026-06-14 14:01:10 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2026-06-14 14:01:10 - Wake reason: PWRON_RESET (power on)
+2026-06-14 14:01:10 - Battery/Vsys voltage: 0.10V (raw ADC: 688)
+2026-06-14 14:01:10 - WARNING: Low voltage detected!
+2026-06-14 14:01:10 - Inky RTC datetime: (2000, 1, 1, 0, 29, 47, 5)
+2026-06-14 14:01:10 - WARNING: RTC has lost time (battery dead?)
+2026-06-14 14:01:10 - Memory: 18208/200320 bytes used (9.1%)
+2026-06-14 14:01:10 - Try to sync time on startup
 
