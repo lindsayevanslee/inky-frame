@@ -5,18 +5,82 @@ import builtins
 import inky_frame
 from sync_time import sync_time_via_ntp
 import sys
+import os
 
 
 # Functions needed to log messages to a file error_log.txt
-# adapted from Pimoroni forum thread: https://forums.pimoroni.com/t/inky-frame-not-refreshing-screen-on-battery-power-using-inky-frame-sleep-for/23174/7 
+# adapted from Pimoroni forum thread: https://forums.pimoroni.com/t/inky-frame-not-refreshing-screen-on-battery-power-using-inky-frame-sleep-for/23174/7
+
+# Logging is size-capped so it can never fill the Pico's flash and crash the
+# boot (the original unbounded log filled the filesystem -> OSError 28 ENOSPC).
+LOG_FILE = 'error_log.txt'
+LOG_MAX_BYTES = 50 * 1024   # rotate when the log grows past ~50 KB
+
 def get_timestamp():
     now = time.localtime()
     return '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(now[0], now[1], now[2], now[3], now[4], now[5])
 
+def _notice(message):
+    """Emit a logging-system notice (rotation / log errors) to the console.
+
+    Used by the low-level log machinery, which runs before print_log is
+    defined and must never recurse back into log(). Console-only and wrapped
+    so it can never itself crash the program. The fresh log file gets its own
+    marker line written directly by the caller.
+    """
+    try:
+        builtins.print(f"[log] {message}")
+    except Exception:
+        pass
+
+def _rotate_log_if_needed():
+    """If the log is over the size cap, keep one previous copy and start fresh.
+
+    Keeping a single .1 backup bounds total log usage at ~2x LOG_MAX_BYTES
+    while preserving recent history for debugging. Returns a marker string to
+    record at the top of the new log, or None if no rotation happened.
+    """
+    try:
+        size = os.stat(LOG_FILE)[6]   # index 6 = st_size on MicroPython
+    except OSError:
+        return None  # file doesn't exist yet; nothing to rotate
+    if size <= LOG_MAX_BYTES:
+        return None
+    backup = LOG_FILE + '.1'
+    try:
+        os.remove(backup)             # remove old backup if present
+    except OSError:
+        pass
+    try:
+        os.rename(LOG_FILE, backup)   # current log becomes the backup
+        _notice(f"rotated {LOG_FILE} ({size} bytes) -> {backup}")
+        return f"log rotated: previous {size} bytes saved to {backup}"
+    except OSError as e:
+        # Rename failed (e.g. disk full): fall back to deleting so we
+        # always reclaim space rather than crash.
+        try:
+            os.remove(LOG_FILE)
+            _notice(f"rotate rename failed ({e}); deleted {LOG_FILE} ({size} bytes) to reclaim space")
+            return f"log rotated: rename failed, previous {size} bytes deleted to reclaim space"
+        except OSError as e2:
+            _notice(f"rotate failed entirely: rename={e} remove={e2}")
+            return None
+
 def log(message):
-    timestamp = get_timestamp()
-    with open('error_log.txt', 'a') as f:
-        f.write(f"{timestamp} - {message}\n")
+    # Never let a logging failure crash the program. A dead log is fine;
+    # a Pico that won't boot because it can't write its own log is not.
+    try:
+        rotation_note = _rotate_log_if_needed()
+        timestamp = get_timestamp()
+        with open(LOG_FILE, 'a') as f:
+            # If we just rotated, record why at the top of the fresh log.
+            if rotation_note:
+                f.write(f"{timestamp} - [log] {rotation_note}\n")
+            f.write(f"{timestamp} - {message}\n")
+    except Exception as e:
+        # Surface the failure on the console so a broken log isn't silent,
+        # but still never crash the caller.
+        _notice(f"write failed: {type(e).__name__}: {e}")
 
 def print_log(*args, **kwargs):
     message = " ".join(str(arg) for arg in args)
