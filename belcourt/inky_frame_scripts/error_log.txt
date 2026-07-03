@@ -14990,4 +14990,70 @@
 2026-06-14 14:01:10 - WARNING: RTC has lost time (battery dead?)
 2026-06-14 14:01:10 - Memory: 18208/200320 bytes used (9.1%)
 2026-06-14 14:01:10 - Try to sync time on startup
+2021-01-01 00:00:02 - [log] log rotated: previous 51246 bytes saved to error_log.txt.1
+2021-01-01 00:00:02 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:05 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client None 0.0.0.0
+2021-01-01 00:00:07 - Network: Client None 0.0.0.0
+2021-01-01 00:00:08 - Network: Client None 0.0.0.0
+2021-01-01 00:00:09 - Network: Client None 0.0.0.0
+2021-01-01 00:00:10 - Network: Client None 0.0.0.0
+2021-01-01 00:00:11 - Network: Client True 192.168.86.42
+2021-01-01 00:00:11 - Getting time from NTP server (attempt 1/3)...
+2026-07-02 23:15:49 - Current time set to: 2026-07-02 23:15:49
+2026-07-02 23:15:49 - Syncing Inky Frame RTC...
+2026-07-02 23:15:50 - Pico RTC time: 2026-07-02 23:15:50
+2026-07-02 23:15:50 - Inky PCF RTC time: 2026-07-02 23:15:50
+2026-07-02 23:15:50 - WiFi disconnected after time sync
+2026-07-02 23:15:50 - entering while loop
+2026-07-02 23:15:50 - === Starting cycle #1 ===
+2026-07-02 23:15:50 - starting showtimes script
+2026-07-02 23:15:50 - Connecting to WiFi...
+2026-07-02 23:15:50 - Network status: Client - None - 0.0.0.0
+2026-07-02 23:15:51 - Network status: Client - None - 0.0.0.0
+2026-07-02 23:15:52 - Network status: Client - None - 0.0.0.0
+2026-07-02 23:15:53 - Network status: Client - True - 192.168.86.42
+2026-07-02 23:15:53 - Connected to WiFi!
+2026-07-02 23:15:53 - Connecting to SD card...
+2026-07-02 23:15:54 - SD card mounted successfully
+2026-07-02 23:15:54 - Downloading image...
+2026-07-02 23:15:54 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+2026-07-02 23:15:56 - Image downloaded!
+2026-07-02 23:15:56 - Decoding image...
+2026-07-02 23:15:59 - Drawing image...
+2021-01-01 00:00:01 - === STARTING MAIN PROGRAM ===
+2021-01-01 00:00:01 - MicroPython version: 3.4.0; MicroPython v1.25.0,   on 2025-05-12
+2021-01-01 00:00:01 - Wake reason: PWRON_RESET (power on)
+2021-01-01 00:00:01 - Battery/Vsys voltage: 0.09V (raw ADC: 592)
+2021-01-01 00:00:01 - WARNING: Low voltage detected!
+2021-01-01 00:00:01 - Inky RTC datetime: (2026, 7, 2, 23, 28, 59, 3)
+2021-01-01 00:00:01 - Memory: 18880/200320 bytes used (9.4%)
+2021-01-01 00:00:01 - Try to sync time on startup
+2021-01-01 00:00:01 - Attempting to sync time via NTP...
+2021-01-01 00:00:01 - Connecting to WiFi for time sync...
+2021-01-01 00:00:03 - Network: Client None 0.0.0.0
+2021-01-01 00:00:04 - Network: Client None 0.0.0.0
+2021-01-01 00:00:05 - Network: Client None 0.0.0.0
+2021-01-01 00:00:06 - Network: Client True 192.168.86.42
+2021-01-01 00:00:06 - Getting time from NTP server (attempt 1/3)...
+2026-07-02 23:29:06 - Current time set to: 2026-07-02 23:29:06
+2026-07-02 23:29:06 - Syncing Inky Frame RTC...
+2026-07-02 23:29:07 - Pico RTC time: 2026-07-02 23:29:07
+2026-07-02 23:29:07 - Inky PCF RTC time: 2026-07-02 23:29:07
+2026-07-02 23:29:07 - WiFi disconnected after time sync
+2026-07-02 23:29:07 - entering while loop
+2026-07-02 23:29:07 - === Starting cycle #1 ===
+2026-07-02 23:29:07 - starting showtimes script
+2026-07-02 23:29:07 - Connecting to WiFi...
+2026-07-02 23:29:07 - Network status: Client - None - 0.0.0.0
+2026-07-02 23:29:08 - Network status: Client - None - 0.0.0.0
+2026-07-02 23:29:09 - Network status: Client - None - 0.0.0.0
+2026-07-02 23:29:10 - Network status: Client - True - 192.168.86.42
+2026-07-02 23:29:10 - Connected to WiFi!
+2026-07-02 23:29:10 - Connecting to SD card...
+2026-07-02 23:29:11 - SD card mounted successfully
+2026-07-02 23:29:11 - Downloading image...
+2026-07-02 23:29:11 - Attempt 1 of 3 to fetch https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg
+
 
