@@ -8,6 +8,7 @@ dependencies:
   - Pillow=11.0.0
   - Scrapy=2.12.0
   - Twisted=25.5.0 # pin: Twisted 26.x removed _setAcceptableProtocols, which Scrapy 2.12.0 imports (breaks all crawling)
+  - w3lib=2.4.1 # pin: w3lib 2.5.0 removed _safe_chars, which Scrapy 2.12.0 imports (ImportError on startup)
   - pyopenssl >= 23.2.0
 
 prefix: ./envs
