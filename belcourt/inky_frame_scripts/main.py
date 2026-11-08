@@ -2,7 +2,9 @@ import time
 import machine
 import gc
 import builtins
-import inky_frame
+import inky_frame   # importing this turns on the battery power-hold pin (GPIO2)
+import network
+import sdcard
 from sync_time import sync_time_via_ntp
 import sys
 import os
@@ -104,15 +106,46 @@ def check_wake_reason():
     except Exception as e:
         print_log(f"Could not determine wake reason: {e}")
 
-def check_battery_voltage():
-    """Check battery voltage if possible"""
+def wifi_off():
+    """Disconnect and power down the Wi-Fi radio. Safe to call any time."""
     try:
-        # Vsys pin on Pico W
+        wlan = network.WLAN(network.STA_IF)
+        if wlan.active():
+            wlan.disconnect()
+            wlan.active(False)
+    except Exception as e:
+        _notice(f"wifi_off failed: {e}")
+
+def read_vsys():
+    """Return VSYS in volts, read the Pico W-safe way.
+
+    On the Pico W, GPIO29 is BOTH the VSYS/3 ADC input AND the Wi-Fi chip's
+    SPI clock, and GPIO25 is the Wi-Fi chip-select. A plain ADC(29) read
+    while Wi-Fi is up measures clock traffic, not the battery. So: radio
+    off, deselect the chip (GPIO25 high), read GPIO29 as an analog input,
+    then hand GPIO29 back to the Wi-Fi driver (alt function 7).
+    Averages a few samples to smooth noise. Raises on failure.
+    """
+    wifi_off()
+    try:
+        machine.Pin(25, machine.Pin.OUT, value=1)
+        machine.Pin(29, machine.Pin.IN, pull=None)
         adc = machine.ADC(29)
-        reading = adc.read_u16()
-        voltage = (reading * 3.3) / 65535 * 3  # Convert to volts
-        print_log(f"Battery/Vsys voltage: {voltage:.2f}V (raw ADC: {reading})")
-        
+        total = 0
+        for _ in range(8):
+            total += adc.read_u16()
+        return (total / 8) * 3.3 / 65535 * 3   # x3 = Pico's on-board divider
+    finally:
+        try:
+            machine.Pin(29, machine.Pin.ALT, pull=machine.Pin.PULL_DOWN, alt=7)
+        except Exception:
+            pass
+
+def check_battery_voltage(label=""):
+    """Log VSYS (Wi-Fi is switched off first, see read_vsys)."""
+    try:
+        voltage = read_vsys()
+        print_log(f"Battery/Vsys voltage {label}: {voltage:.2f}V (idle, Wi-Fi off)")
         if voltage < 3.0:
             print_log("WARNING: Low voltage detected!")
         return voltage
@@ -145,94 +178,171 @@ def log_memory_status():
     except Exception as e:
         print_log(f"Could not check memory: {e}")
 
+# ---------------------------------------------------------------------------
+# Boot-loop detector (written to the SD card, not the Pico's flash)
+#
+# On battery, inky_frame.sleep_for() doesn't "sleep" the Pico: it arms the
+# RTC alarm and then cuts the Pico's power entirely. So every wake is a fresh
+# power-on and nothing survives in RAM. To spot crashes and brown-outs we
+# persist a tiny state file across boots:
+#     /sd/boot_state.txt  ->  "<boot_count> <awake|sleeping>"
+# We write "awake" at boot and "sleeping" right before sleep_for(). If a boot
+# finds the previous state still "awake", the previous run died (crash,
+# brown-out, unplugged) before reaching sleep.
+# ---------------------------------------------------------------------------
+SD_MOUNT = "/sd"
+BOOT_LOG = SD_MOUNT + "/boot_log.txt"
+BOOT_STATE = SD_MOUNT + "/boot_state.txt"
+
+SLEEP_MINUTES = 720   # normal refresh interval (12 h)
+RETRY_MINUTES = 60    # after a failed cycle: deep-sleep, then try again
+
+def mount_sd():
+    """Mount the SD card at /sd if it isn't already. Returns True on success."""
+    try:
+        sd_spi = machine.SPI(0, sck=machine.Pin(18, machine.Pin.OUT), mosi=machine.Pin(19, machine.Pin.OUT), miso=machine.Pin(16, machine.Pin.OUT))
+        os.mount(sdcard.SDCard(sd_spi, machine.Pin(22)), SD_MOUNT)
+        return True
+    except OSError as e:
+        if e.args and e.args[0] == 1:   # EPERM: something is already mounted at /sd
+            return True
+        print_log(f"SD mount for boot log failed: {e}")
+        return False
+    except Exception as e:
+        print_log(f"SD mount for boot log failed: {e}")
+        return False
+
+def pcf_timestamp():
+    """Time from the Inky's PCF85063A RTC, which keeps running while the
+    Pico is unpowered. Format: (year, month, day, hour, minute, second, dow)."""
+    try:
+        t = inky_frame.rtc.datetime()
+        return '{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}'.format(*t[:6])
+    except Exception as e:
+        return f"rtc-error({e})"
+
+def write_boot_state(count, state):
+    try:
+        with open(BOOT_STATE, "w") as f:
+            f.write(f"{count} {state}")
+    except Exception as e:
+        print_log(f"Could not write boot state: {e}")
+
+def record_boot(vsys):
+    """Bump the boot counter and append one line to /sd/boot_log.txt.
+    Returns the new boot count (0 if the SD card isn't usable)."""
+    if not mount_sd():
+        return 0
+    count, prev_state = 0, "none"
+    try:
+        with open(BOOT_STATE) as f:
+            parts = f.read().split()
+        count, prev_state = int(parts[0]), parts[1]
+    except Exception:
+        pass   # first boot with this feature, or unreadable file: start over
+    count += 1
+
+    def woke(fn_name):
+        fn = getattr(inky_frame, fn_name, None)   # absent in older firmware
+        try:
+            return int(fn()) if fn else "?"
+        except Exception:
+            return "?"
+
+    flag = "" if prev_state in ("sleeping", "none") else "  <-- PREVIOUS RUN DID NOT REACH SLEEP"
+    line = (f"{pcf_timestamp()} boot#{count} vsys={vsys:.2f}V "
+            f"reset={machine.reset_cause()} rtc_wake={woke('woken_by_rtc')} "
+            f"button={woke('woken_by_button')} prev={prev_state}{flag}\n")
+    try:
+        with open(BOOT_LOG, "a") as f:
+            f.write(line)
+    except Exception as e:
+        print_log(f"Could not write boot log: {e}")
+    write_boot_state(count, "awake")
+    print_log("Boot record: " + line.strip())
+    return count
+
+def go_to_sleep(minutes, boot_count):
+    """The single exit point of every cycle. Never raises."""
+    wifi_off()   # also matters for the awake fallback below
+    check_battery_voltage("(pre-sleep)")
+    if boot_count:
+        write_boot_state(boot_count, "sleeping")
+    try:
+        print_log(f"Attempting inky_frame.sleep_for({minutes} minutes)")
+        print_log("If this is the last message, deep sleep worked!")
+        inky_frame.sleep_for(minutes)
+        # On battery we never get here (power is cut). On USB, sleep_for()
+        # can't cut power, so it simulates the sleep with time.sleep() and
+        # returns afterwards; that's expected.
+        print_log("sleep_for() returned (expected on USB power)")
+    except Exception as e:
+        # Couldn't arm the RTC alarm. Stay awake as a last resort so we at
+        # least retry later, but log loudly; this path drains batteries.
+        print_log(f"Sleep error: {type(e).__name__}: {e}; awake fallback for {minutes} min")
+        try:
+            time.sleep(minutes * 60)
+        except Exception:
+            pass
+
+# ---------------------------------------------------------------------------
+# Boot
+# ---------------------------------------------------------------------------
+# On battery the Pico's own clock restarts from a default date at every
+# power-on; copy the Inky's battery-backed RTC into it so log timestamps are
+# real before NTP runs. (Helper exists in recent Pimoroni firmware only.)
+try:
+    if hasattr(inky_frame, "pcf_to_pico_rtc"):
+        inky_frame.pcf_to_pico_rtc()
+except Exception as e:
+    _notice(f"pcf_to_pico_rtc failed: {e}")
+
 print_log("=== STARTING MAIN PROGRAM ===")
 print_log(f"MicroPython version: {sys.version}")
 
-# Check diagnostic info on startup
+# Read VSYS FIRST, before anything turns Wi-Fi on.
+vsys_at_boot = check_battery_voltage("(boot)")
+boot_count = record_boot(vsys_at_boot)
+
 check_wake_reason()
-check_battery_voltage()
 check_rtc_status()
 log_memory_status()
 
 print_log("Try to sync time on startup")
-sync_time_via_ntp(print_log)
+sync_time_via_ntp(print_log)   # catches its own errors
 
 print_log("entering while loop")
-
-# Add error recovery
-max_errors = 3
-error_count = 0
 cycle_count = 0
 
-try:
-    while True:
+while True:
+    cycle_count += 1
+    sleep_minutes = RETRY_MINUTES   # assume failure until the cycle succeeds
+    interrupted = False
+    try:
+        print_log(f"=== Starting cycle #{cycle_count} ===")
+        print_log("starting showtimes script")
+        with open("showtimes_from_web.py") as f:
+            exec(f.read())
+        print_log("finished showtimes script")
+        sleep_minutes = SLEEP_MINUTES
+        check_rtc_status()
+        log_memory_status()
+    except KeyboardInterrupt:
+        # Ctrl-C from Thonny/mpremote: let the developer get a prompt.
+        interrupted = True
+        raise
+    except Exception as e:
+        print_log(f"ERROR in cycle: {type(e).__name__}: {e}")
         try:
-            cycle_count += 1
-            print_log(f"=== Starting cycle #{cycle_count} ===")
-            
-            print_log("starting showtimes script")
-            with open("showtimes_from_web.py") as f:
-                exec(f.read())
-            
-            print_log("finished showtimes script")
-            error_count = 0  # Reset on success
-            
-            # Check status before sleep
-            print_log("Pre-sleep status check:")
-            check_battery_voltage()
-            check_rtc_status()
-            log_memory_status()
-            
-            print_log("going to sleep now")
-            
-            # Modified sleep with more logging
-            try:
-                print_log("Attempting inky_frame.sleep_for(720 minutes)")
-                print_log("If this is the last message, deep sleep worked!")
-                inky_frame.sleep_for(720)
-                
-                # If we get here, sleep didn't actually sleep
-                print_log("WARNING: sleep_for() returned immediately - sleep didn't happen!")
-                
-            except Exception as e:
-                print_log(f"Sleep error: {e}, using fallback sleep")
-                print_log(f"Error type: {type(e).__name__}")
-                print_log(f"Starting fallback: 72 x 10-minute sleeps")
-                
-                # Fallback: lighter sleep that's more reliable
-                for i in range(72):
-                    if i % 6 == 0:  # Log every hour
-                        print_log(f"Fallback sleep progress: {i}/72 cycles ({i*10} minutes elapsed)")
-                        check_battery_voltage()
-                        log_memory_status()
-                    time.sleep(600)  # 10 minutes
-                    gc.collect()
-                
-                print_log("Fallback sleep completed - continuing loop")
-                    
-        except Exception as e:
-            error_count += 1
-            print_log(f"ERROR in main loop (attempt {error_count}): {type(e).__name__}: {str(e)}")
-            
-            # Log full traceback if possible
-            try:
-                import sys
-                import io
-                import traceback
-                s = io.StringIO()
-                traceback.print_exc(file=s)
-                print_log(f"Traceback: {s.getvalue()}")
-            except:
-                pass
-            
-            if error_count >= max_errors:
-                print_log("Max errors reached, attempting recovery sleep")
-                time.sleep(3600)  # Sleep 1 hour then retry
-                error_count = 0
-            else:
-                print_log(f"Waiting 30 seconds before retry...")
-                time.sleep(30)  # Brief pause before retry
-                
-except Exception as e:
-    print_log(f"FATAL ERROR: {type(e).__name__}: {str(e)}")
-    print_log("Program terminating")
+            import io
+            s = io.StringIO()
+            sys.print_exception(e, s)   # MicroPython's traceback printer
+            print_log(f"Traceback: {s.getvalue()}")
+        except Exception:
+            pass
+        print_log(f"Will deep-sleep {RETRY_MINUTES} min and retry")
+    finally:
+        # Whatever happened above (success, failed Wi-Fi, failed download,
+        # failed draw, unexpected bug), we always end in sleep_for().
+        if not interrupted:
+            go_to_sleep(sleep_minutes, boot_count)
