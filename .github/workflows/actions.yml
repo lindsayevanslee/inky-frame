@@ -39,7 +39,15 @@ jobs:
           conda list
           conda config --show-sources
           conda config --show
-     
+
+      - name: run belcourt tests
+        # Offline tests of the spider's parsing and the image generator (no
+        # network; they use small inline HTML snippets). Running them before
+        # the spider means a broken generator stops the run here, so the frame
+        # keeps yesterday's image instead of a bad commit landing on main.
+        # Same tests run on pull requests via tests.yml.
+        run: python -m unittest discover -s belcourt/tests -v
+
       - name: execute spider script # run showtimes.py
         run: |
           cd belcourt/belcourt/spiders
