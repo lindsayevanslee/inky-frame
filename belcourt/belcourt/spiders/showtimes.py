@@ -2,6 +2,21 @@ import scrapy
 from datetime import datetime
 from belcourt.items import BelcourtItem
 
+
+def clean_text(fragments):
+    """Join scraped text fragments into one string with tidy whitespace.
+
+    Scrapy's //text() returns every text node separately, including the
+    newlines between tags, e.g. ['\\n', 'A Red Carpet Evening', '\\n'].
+    Collapsing all runs of whitespace to single spaces keeps those stray
+    newlines from turning into blank lines on the rendered image.
+
+    Fragments are concatenated with '' (not ' ') so a title split across
+    tags, like 'ANORA (' + '35mm' + ')', stays 'ANORA (35mm)'.
+    """
+    return ' '.join(''.join(fragments).split())
+
+
 class ShowtimesSpider(scrapy.Spider):
     name = 'showtimes'
     allowed_domains = ['belcourt.org']
@@ -39,12 +54,16 @@ class ShowtimesSpider(scrapy.Spider):
 
             print(showtimes)
 
-            #if showtimes is empty, look for a description
+            #if showtimes is empty, look for a description (e.g. "No films are
+            #screening today..." when the theater is closed for an event).
+            #Join it into a single string so the image generator doesn't put
+            #commas between text fragments.
             if not showtimes:
-                showtimes = div_day.xpath('.//*[@class="day-event-list__description"]//text()').getall()
+                description = clean_text(div_day.xpath('.//*[@class="day-event-list__description"]//text()').getall())
+                showtimes = [description] if description else []
 
             dict_shows_all.update({j: {
-                "show": [''.join(show_name)], #in case multiple show names are captured, join them into one string in a one element list
+                "show": [clean_text(show_name)], #in case multiple show names are captured, join them into one string in a one element list
                 "showtimes": showtimes
             }})
 

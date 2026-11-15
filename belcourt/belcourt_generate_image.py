@@ -8,7 +8,12 @@ print("Starting Belcourt showtime image generation...")
 ### setup -------------------------
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+from datetime import datetime
 import json
+
+#message shown when the Belcourt lists no events for today (e.g. closed for a
+#holiday). Without it the frame would show a blank image with no explanation.
+NO_SHOWS_MESSAGE = "No showtimes today."
 
 #create function for inserting indented new lines in a long string without breaking up words
 def insert_newlines(string, every=64):
@@ -32,7 +37,26 @@ print("Reading showtime data from output_showtimes.json...")
 with open("output_showtimes.json", "rt") as f:
     showtimes = json.load(f)
 
-print(f"Processing showtimes for date: {showtimes[0]['date'][0]}")
+#the spider writes a one-element list; tolerate an empty file/list too
+data = showtimes[0] if showtimes else {}
+shows = data.get('shows') or {}
+
+#pick the subtitle date. When the site has no "today" block at all (e.g. the
+#theater is closed), the spider's date list is empty, and indexing [0] used to
+#crash with IndexError. Fall back to the scrape time, formatted to match the
+#site's style ("Sunday, Mar 10").
+def get_subtitle(data):
+    if data.get('date'):
+        return data['date'][0].strip()
+    try:
+        when = datetime.strptime(data['currenttime'], "%Y-%m-%d %H:%M:%S")
+    except (KeyError, TypeError, ValueError):
+        when = datetime.now()
+    return f"{when:%A, %b} {when.day}"
+
+subtitle = get_subtitle(data)
+
+print(f"Processing showtimes for date: {subtitle}")
 
 #set dimensions
 width = 800
@@ -40,10 +64,6 @@ height = 480
 
 #define title
 title = "TODAY'S SHOWTIMES"
-
-#define subtitle
-subtitle = showtimes[0]['date'][0]
-
 
 #define font
 font_title = ImageFont.truetype("Montserrat-Bold.ttf", size=40)
@@ -84,15 +104,15 @@ imgDraw.text((width - 10, 70), anchor = 'rt', text = subtitle, font=font_subtitl
 
 #initialize showtimes string
 showtime_string = ''
-num_shows = len(showtimes[0]['shows'])
+num_shows = len(shows)
 print(f"Found {num_shows} shows to process")
 
-for i in range(len(showtimes[0]['shows'])):
+for i in range(num_shows):
 
-    this_show = showtimes[0]['shows'][str(i)]['show'][0]
+    this_show = shows[str(i)]['show'][0]
     print(f"Processing show: {this_show}")
 
-    this_showtimes_list = showtimes[0]['shows'][str(i)]['showtimes']
+    this_showtimes_list = shows[str(i)]['showtimes']
 
     #if length of showtimes element is 0, return empty string for showtimes
     if len(this_showtimes_list) == 0:
@@ -108,6 +128,11 @@ for i in range(len(showtimes[0]['shows'])):
 
     #add this showtime string to the full showtime string
     showtime_string = showtime_string + this_showtime_string
+
+#if there are no events today, say so instead of leaving the area blank
+if num_shows == 0:
+    print("No shows found; rendering closed message")
+    showtime_string = NO_SHOWS_MESSAGE
 
 #count number of lines in showtime string
 num_lines = showtime_string.count('\n') + 1
