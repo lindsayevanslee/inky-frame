@@ -1,6 +1,10 @@
 import scrapy
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from belcourt.items import BelcourtItem
+
+#the Belcourt is in Nashville; "today" means today in Central time
+BELCOURT_TZ = ZoneInfo("America/Chicago")
 
 
 def clean_text(fragments):
@@ -27,7 +31,11 @@ class ShowtimesSpider(scrapy.Spider):
         #initiate object that will store results
         belcourt = BelcourtItem()
 
-        belcourt["currenttime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        #record the scrape time in the Belcourt's own time zone, not the
+        #machine's. The GitHub runner's clock is UTC, so after ~6-7pm Central
+        #a plain datetime.now() would already be "tomorrow". The format is
+        #unchanged; belcourt_generate_image.py reads it back as Central time.
+        belcourt["currenttime"] = datetime.now(BELCOURT_TZ).strftime("%Y-%m-%d %H:%M:%S")
 
         #capture date
         belcourt["date"] = response.xpath('//div[@class="day today"]//h4[@class="widget-subtitle"]//text()').getall()
@@ -56,15 +64,17 @@ class ShowtimesSpider(scrapy.Spider):
 
             #if showtimes is empty, look for a description (e.g. "No films are
             #screening today..." when the theater is closed for an event).
-            #Join it into a single string so the image generator doesn't put
-            #commas between text fragments.
+            #It is stored in its own "description" field, not in "showtimes",
+            #so the image generator can tell the two apart and format the
+            #description differently (with a " — " separator, not as times).
+            description = ''
             if not showtimes:
                 description = clean_text(div_day.xpath('.//*[@class="day-event-list__description"]//text()').getall())
-                showtimes = [description] if description else []
 
             dict_shows_all.update({j: {
                 "show": [clean_text(show_name)], #in case multiple show names are captured, join them into one string in a one element list
-                "showtimes": showtimes
+                "showtimes": showtimes,
+                "description": description
             }})
 
             j = j + 1

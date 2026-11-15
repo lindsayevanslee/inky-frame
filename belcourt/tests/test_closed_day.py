@@ -23,13 +23,19 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timezone
+from unittest import mock
+from zoneinfo import ZoneInfo
 
 from scrapy.http import HtmlResponse
 
 BELCOURT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BELCOURT_DIR)
 
+from belcourt.spiders import showtimes as showtimes_module  # noqa: E402
 from belcourt.spiders.showtimes import ShowtimesSpider, clean_text  # noqa: E402
+
+CENTRAL = ZoneInfo("America/Chicago")
 
 TEST_DATA_DIR = os.path.join(BELCOURT_DIR, "test_data")
 
@@ -95,13 +101,32 @@ class SpiderTest(unittest.TestCase):
         self.assertEqual(item["shows"][0]["show"], ["ANORA (35mm)"])
         self.assertEqual(item["shows"][0]["showtimes"], ["1:25pm", "6:35pm"])
 
+    def test_normal_day_has_no_description(self):
+        self.assertEqual(parse(NORMAL_DAY_HTML)["shows"][0]["description"], "")
+
     def test_closed_for_event_uses_one_clean_description(self):
         show = parse(CLOSED_FOR_EVENT_HTML)["shows"][0]
         self.assertEqual(show["show"], ["A Red Carpet Evening"])
+        # description goes in its own field so the generator can format it
+        self.assertEqual(show["showtimes"], [])
         self.assertEqual(
-            show["showtimes"],
-            ["No films are screening today as we prepare for tonight’s SOLD OUT Red Carpet Evening"],
+            show["description"],
+            "No films are screening today as we prepare for tonight’s SOLD OUT Red Carpet Evening",
         )
+
+    def test_currenttime_is_central_not_machine_time(self):
+        # 01:30 UTC on Nov 16 is still 7:30pm on Nov 15 in Nashville (CST,
+        # UTC-6). A naive datetime.now() on a UTC runner would say Nov 16.
+        instant = datetime(2026, 11, 16, 1, 30, tzinfo=timezone.utc)
+
+        class FrozenDatetime(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return instant.astimezone(tz) if tz else instant.replace(tzinfo=None)
+
+        with mock.patch.object(showtimes_module, "datetime", FrozenDatetime):
+            item = parse(NO_TODAY_BLOCK_HTML)
+        self.assertEqual(item["currenttime"], "2026-11-15 19:30:00")
 
     def test_empty_event_list(self):
         item = parse(EMPTY_LIST_HTML)
@@ -117,7 +142,7 @@ class SpiderTest(unittest.TestCase):
 class GeneratorRunner:
     """Mixin: runs belcourt_generate_image.py as the GitHub Action does (cwd = belcourt)."""
 
-    def run_generator(self, payload):
+    def run_generator(self, payload, env=None):
         with tempfile.TemporaryDirectory() as tmp:
             for name in ("belcourt_generate_image.py", "Montserrat-Bold.ttf", "belcourt-logo.png"):
                 shutil.copy(os.path.join(BELCOURT_DIR, name), tmp)
@@ -127,6 +152,7 @@ class GeneratorRunner:
             result = subprocess.run(
                 [sys.executable, "belcourt_generate_image.py"],
                 cwd=tmp, capture_output=True, text=True,
+                env={**os.environ, **(env or {})},
             )
             self.assertEqual(result.returncode, 0, msg=result.stderr)
             for image in ("result.jpg", "result_optimized.jpg"):
@@ -138,11 +164,28 @@ class GenerateImageTest(GeneratorRunner, unittest.TestCase):
     def test_normal_day(self):
         out = self.run_generator([parse(NORMAL_DAY_HTML)])
         self.assertIn("Processing showtimes for date: Sunday, Mar 10", out)
+        self.assertIn("Line: ANORA (35mm) 1:25pm, 6:35pm", out)
+        self.assertNotIn("\u2014", out)
         self.assertNotIn("No shows found", out)
 
     def test_closed_for_event(self):
         out = self.run_generator([parse(CLOSED_FOR_EVENT_HTML)])
-        self.assertIn("Processing show: A Red Carpet Evening", out)
+        self.assertIn(
+            "Line: A Red Carpet Evening \u2014 No films are screening today as we prepare for", out
+        )
+
+    def test_old_json_with_description_in_showtimes_still_renders(self):
+        # JSON written before the "description" field existed (no such key)
+        old = {"date": ["Sunday, Mar 10"], "shows": {"0": {
+            "show": ["A Red Carpet Evening"], "showtimes": ["No films are screening today"]}}}
+        out = self.run_generator([old])
+        self.assertIn("Line: A Red Carpet Evening No films are screening today", out)
+
+    def test_title_only_event(self):
+        item = {"date": ["Sunday, Mar 10"], "shows": {"0": {
+            "show": ["MEMBERS ONLY"], "showtimes": [], "description": ""}}}
+        out = self.run_generator([item])
+        self.assertIn("Line: MEMBERS ONLY\n", out)
 
     def test_empty_event_list_renders_closed_message(self):
         out = self.run_generator([parse(EMPTY_LIST_HTML)])
@@ -159,6 +202,24 @@ class GenerateImageTest(GeneratorRunner, unittest.TestCase):
         # Worst case: spider produced nothing usable. Still make an image.
         self.run_generator([{}])
         self.run_generator([])
+
+    def test_last_resort_date_uses_central_not_machine_tz(self):
+        # Run the generator in UTC+14, where "today" is usually a day ahead of
+        # Nashville. With no date and no currenttime, it must still use the
+        # Central date. Compute the expected date before and after the run so
+        # the test can't flake if Central midnight passes mid-test.
+        def central_today():
+            now = datetime.now(CENTRAL)
+            return f"{now:%A, %b} {now.day}"
+
+        before = central_today()
+        out = self.run_generator([{}], env={"TZ": "Pacific/Kiritimati"})
+        after = central_today()
+        self.assertTrue(
+            f"Processing showtimes for date: {before}" in out
+            or f"Processing showtimes for date: {after}" in out,
+            msg=out,
+        )
 
 
 @unittest.skipUnless(os.path.isdir(TEST_DATA_DIR), "belcourt/test_data/ not present (gitignored)")
