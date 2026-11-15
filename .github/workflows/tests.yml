@@ -1,0 +1,52 @@
+name: belcourt tests
+
+# Runs the Belcourt spider/image-generator tests (belcourt/tests/) on pull
+# requests that touch belcourt/, so a change is checked before it merges. The daily run (actions.yml) runs the same tests before scraping.
+#
+# The tests are offline: they parse small inline HTML snippets and run
+# belcourt_generate_image.py in a temp directory. The real saved pages in
+# belcourt/test_data/ are gitignored, so that test is skipped here.
+
+on:
+  pull_request:
+    paths:
+      - 'belcourt/**'
+      - 'environment.yml'
+      - '.github/workflows/tests.yml'
+  # No push trigger: it would run a second time for every push to a PR
+  # branch. main gets daily bot commits, which actions.yml already tests.
+  workflow_dispatch: # manual run from the Actions tab
+
+# If a branch gets a new push while its tests are still running, cancel the
+# older run; only the latest commit's result matters.
+concurrency:
+  group: belcourt-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read # tests only read the repo; they never push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash -el {0} # login shell so the conda env is activated
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v6
+
+      # Same environment as the daily run, so tests use the exact pinned
+      # Scrapy / Pillow / Twisted / w3lib versions that production uses.
+      - name: setup conda
+        uses: conda-incubator/setup-miniconda@v4
+        with:
+          activate-environment: inkyenv
+          environment-file: environment.yml
+          python-version: 3.11
+          auto-activate: false
+          auto-update-conda: true
+
+      - name: run belcourt tests
+        run: python -m unittest discover -s belcourt/tests -v
