@@ -1,0 +1,43 @@
+# Python dependencies for this repo, managed with uv (https://docs.astral.sh/uv/).
+#
+# This is not an installable package; pyproject.toml just lists dependencies,
+# and uv.lock pins every package (including transitive ones) to an exact
+# version. The lock file is what keeps the daily run stable: the production
+# run broke twice when unpinned transitive dependencies moved (Twisted 26
+# removed _setAcceptableProtocols; w3lib 2.5 removed _safe_chars).
+#
+#   uv sync                      # belcourt runtime deps only (what CI installs)
+#   uv sync --group nashvillemta # also install nashvillemta/analysis deps
+#   uv lock --upgrade-package X  # deliberately bump one package
+[project]
+name = "inky-frame"
+version = "0.1.0"
+description = "Scripts that build images for an Inky Frame display"
+readme = "README.md"
+requires-python = "==3.11.*"
+# belcourt spider + image generator (the daily GitHub Actions run)
+dependencies = [
+    "pillow==11.0.0",
+    "scrapy==2.12.0",
+    # pin: Twisted 26.x removed _setAcceptableProtocols, which Scrapy 2.12.0 imports (breaks all crawling)
+    "twisted==25.5.0",
+    # pin: w3lib 2.5.0 removed _safe_chars, which Scrapy 2.12.0 imports (ImportError on startup)
+    "w3lib==2.4.1",
+    "pyopenssl>=23.2.0",
+]
+
+[dependency-groups]
+# nashvillemta bus board + analysis/ scripts. Kept out of the default install
+# so the daily belcourt run doesn't download pandas/scipy/matplotlib.
+nashvillemta = [
+    "pandas",
+    "scipy",
+    "matplotlib",
+    "googlemaps",
+    "gtfs-realtime-bindings",
+    "requests",
+]
+
+[tool.uv]
+# Not a package: don't try to build/install the repo itself.
+package = false
