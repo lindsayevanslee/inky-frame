@@ -11,7 +11,8 @@ on:
   pull_request:
     paths:
       - 'belcourt/**'
-      - 'environment.yml'
+      - 'pyproject.toml'
+      - 'uv.lock'
       - '.github/workflows/tests.yml'
   # No push trigger: it would run a second time for every push to a PR
   # branch. main gets daily bot commits, which actions.yml already tests.
@@ -30,23 +31,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    defaults:
-      run:
-        shell: bash -el {0} # login shell so the conda env is activated
     steps:
       - name: checkout repo content
         uses: actions/checkout@v6
 
-      # Same environment as the daily run, so tests use the exact pinned
-      # Scrapy / Pillow / Twisted / w3lib versions that production uses.
-      - name: setup conda
-        uses: conda-incubator/setup-miniconda@v4
+      # Same setup as the daily run (actions.yml), so tests use the exact
+      # Scrapy / Pillow / Twisted / w3lib versions pinned in uv.lock.
+      - name: setup uv
+        uses: astral-sh/setup-uv@v10.3.3
         with:
-          activate-environment: inkyenv
-          environment-file: environment.yml
-          python-version: 3.11
-          auto-activate: false
-          auto-update-conda: true
+          version: "0.13.8"
+          enable-cache: true
+
+      - name: install dependencies
+        run: uv sync --locked
 
       - name: run belcourt tests
-        run: python -m unittest discover -s belcourt/tests -v
+        run: uv run python -m unittest discover -s belcourt/tests -v

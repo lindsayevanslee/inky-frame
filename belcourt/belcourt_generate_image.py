@@ -2,6 +2,7 @@
 
 #after running spider, navigate to belcourt folder before running
 #cd ../..
+#uv run python belcourt_generate_image.py
 
 print("Starting Belcourt showtime image generation...")
 

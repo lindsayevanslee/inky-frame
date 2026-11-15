@@ -16,29 +16,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash -el {0}
     steps:
 
       - name: checkout repo content
         uses: actions/checkout@v6 # checkout the repository content to github runner
 
-      - name: setup conda
-        uses: conda-incubator/setup-miniconda@v4
+      - name: setup uv
+        # Installs uv and Python 3.11 (from requires-python in pyproject.toml).
+        # enable-cache keeps downloaded wheels between runs, keyed on uv.lock.
+        uses: astral-sh/setup-uv@v10.3.3
         with:
-          activate-environment: inkyenv
-          environment-file: environment.yml
-          python-version: 3.11
-          auto-activate: false # renamed from deprecated auto-activate-base; inkyenv is activated via activate-environment above
-          auto-update-conda: true
-      
-      - name: check conda
-        run: |
-          conda info
-          conda list
-          conda config --show-sources
-          conda config --show
+          version: "0.13.8"
+          enable-cache: true
+
+      - name: install dependencies
+        # --locked: install exactly what uv.lock says, and fail if uv.lock is
+        # out of date with pyproject.toml instead of quietly re-resolving.
+        # Only the belcourt runtime deps; the nashvillemta group is skipped.
+        run: uv sync --locked
 
       - name: run belcourt tests
         # Offline tests of the spider's parsing and the image generator (no
@@ -46,7 +41,7 @@ jobs:
         # the spider means a broken generator stops the run here, so the frame
         # keeps yesterday's image instead of a bad commit landing on main.
         # Same tests run on pull requests via tests.yml.
-        run: python -m unittest discover -s belcourt/tests -v
+        run: uv run python -m unittest discover -s belcourt/tests -v
 
       - name: execute spider script # run showtimes.py
         run: |
@@ -54,13 +49,13 @@ jobs:
           # CLOSESPIDER_ERRORCOUNT=1 makes scrapy exit non-zero if anything is
           # logged at ERROR/CRITICAL (e.g. the Twisted ImportError), so a broken
           # crawl fails the build instead of silently committing stale output.
-          scrapy runspider showtimes.py -O ../../output_showtimes.json \
+          uv run scrapy runspider showtimes.py -O ../../output_showtimes.json \
             --set=CLOSESPIDER_ERRORCOUNT=1
 
       - name: generate jpg # run belcourt_generate_image.py
         run: |
           cd belcourt
-          python belcourt_generate_image.py
+          uv run python belcourt_generate_image.py
           
       - name: commit files
         run: |

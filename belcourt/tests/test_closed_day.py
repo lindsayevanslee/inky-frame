@@ -11,8 +11,8 @@ Covers both halves of the pipeline:
 The real saved pages in belcourt/test_data/ are gitignored, so they are only
 exercised when present on your machine (see RealSavedPagesTest).
 
-Run from the repo root, in the inkyenv conda environment (needs Scrapy + Pillow):
-    conda run -n inkyenv python -m unittest discover -s belcourt/tests
+Run from the repo root (uv installs Scrapy + Pillow from uv.lock on first run):
+    uv run python -m unittest discover -s belcourt/tests -v
 """
 import contextlib
 import io

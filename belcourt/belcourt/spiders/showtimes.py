@@ -87,7 +87,8 @@ class ShowtimesSpider(scrapy.Spider):
 
         return belcourt
 
-#Run in termainal from inside spiders directory: 
+#Run in terminal from inside spiders directory (uv finds pyproject.toml in the
+#repo root and uses its locked environment):
 # cd belcourt/belcourt/spiders
-# scrapy runspider showtimes.py
-# scrapy runspider showtimes.py -o ../../output_showtimes.json
+# uv run scrapy runspider showtimes.py
+# uv run scrapy runspider showtimes.py -O ../../output_showtimes.json
