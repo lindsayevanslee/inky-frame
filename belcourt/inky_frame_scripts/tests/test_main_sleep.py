@@ -52,8 +52,16 @@ def make_stubs(sleep_calls, sd_root):
     inky.woken_by_rtc = lambda: True
     inky.woken_by_button = lambda: False
 
+    class FakeLED:
+        """Records every on/off so tests can check the awake light."""
+        def __init__(self): self.history = []
+        def on(self): self.history.append("on")
+        def off(self): self.history.append("off")
+    inky.led_busy = FakeLED()
+
     def sleep_for(minutes):
-        sleep_calls.append(minutes)
+        # The light must already be off at the moment we go to sleep.
+        sleep_calls.append((minutes, inky.led_busy.history[-1]))
         raise StopTest()
     inky.sleep_for = sleep_for
 
@@ -121,12 +129,12 @@ class MainSleepTests(unittest.TestCase):
 
     def test_failure_still_sleeps_with_retry_interval(self):
         calls = self.run_main('raise Exception("Image download failed")\n')
-        self.assertEqual(calls, [60])
+        self.assertEqual(calls, [(60, "off")])
         self.assertIn("ERROR in cycle", open("error_log.txt").read())
 
     def test_success_sleeps_full_interval(self):
         calls = self.run_main('print_log("drawn")\n')
-        self.assertEqual(calls, [720])
+        self.assertEqual(calls, [(720, "off")])
         self.assertEqual(self.read_sd("boot_state.txt"), "1 sleeping")
 
     def test_boot_log_flags_run_that_never_slept(self):

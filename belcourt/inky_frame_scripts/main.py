@@ -106,6 +106,23 @@ def check_wake_reason():
     except Exception as e:
         print_log(f"Could not determine wake reason: {e}")
 
+def awake_light(on):
+    """Activity LED on the front of the frame = "the Pico is awake".
+
+    Lit from boot until the moment we call sleep_for(). On battery,
+    sleep_for() cuts power so the light goes out by itself; on USB the Pico
+    stays powered during the simulated sleep, so we switch it off explicitly.
+    If the light is on for more than a couple of minutes, the frame is stuck
+    awake. Never raises: a broken light must not stop the program.
+    """
+    try:
+        if on:
+            inky_frame.led_busy.on()
+        else:
+            inky_frame.led_busy.off()
+    except Exception as e:
+        _notice(f"awake_light failed: {e}")
+
 def wifi_off():
     """Disconnect and power down the Wi-Fi radio. Safe to call any time."""
     try:
@@ -271,6 +288,7 @@ def go_to_sleep(minutes, boot_count):
     try:
         print_log(f"Attempting inky_frame.sleep_for({minutes} minutes)")
         print_log("If this is the last message, deep sleep worked!")
+        awake_light(False)
         inky_frame.sleep_for(minutes)
         # On battery we never get here (power is cut). On USB, sleep_for()
         # can't cut power, so it simulates the sleep with time.sleep() and
@@ -279,6 +297,7 @@ def go_to_sleep(minutes, boot_count):
     except Exception as e:
         # Couldn't arm the RTC alarm. Stay awake as a last resort so we at
         # least retry later, but log loudly; this path drains batteries.
+        awake_light(True)   # we really are awake; keep the light honest
         print_log(f"Sleep error: {type(e).__name__}: {e}; awake fallback for {minutes} min")
         try:
             time.sleep(minutes * 60)
@@ -297,6 +316,7 @@ try:
 except Exception as e:
     _notice(f"pcf_to_pico_rtc failed: {e}")
 
+awake_light(True)
 print_log("=== STARTING MAIN PROGRAM ===")
 print_log(f"MicroPython version: {sys.version}")
 
@@ -319,6 +339,7 @@ while True:
     sleep_minutes = RETRY_MINUTES   # assume failure until the cycle succeeds
     interrupted = False
     try:
+        awake_light(True)   # back on after a simulated (USB) sleep
         print_log(f"=== Starting cycle #{cycle_count} ===")
         print_log("starting showtimes script")
         with open("showtimes_from_web.py") as f:
