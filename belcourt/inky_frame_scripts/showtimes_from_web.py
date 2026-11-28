@@ -76,6 +76,13 @@ FILENAME = "/sd/result.jpg"
 ENDPOINT = "https://lindsayevanslee.github.io/inky-frame/belcourt/result.jpg"
 
 # Initialize SD card
+# main.py already mounted /sd at boot for the boot log. Unmount and remount
+# here (after PicoGraphics has set up the shared SPI bus) so the SD driver
+# re-applies its own SPI settings, exactly as this script always did.
+try:
+    uos.umount("/sd")
+except OSError:
+    pass  # wasn't mounted
 try:
     sd_spi = machine.SPI(0, sck=machine.Pin(18, machine.Pin.OUT), mosi=machine.Pin(19, machine.Pin.OUT), miso=machine.Pin(16, machine.Pin.OUT))
     sd = sdcard.SDCard(sd_spi, machine.Pin(22))
